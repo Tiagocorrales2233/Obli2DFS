@@ -24,7 +24,8 @@ const LoginPage = () => {
     return (
         <>
             <div className="video-background">
-                <video autoPlay muted loop>
+                <video autoPlay muted loop playsInline>
+                    <source src="https://media.istockphoto.com/id/1298841325/video/football-match-goals-and-attacks.mp4?s=mp4-640x640-is" type="video/mp4" />
                     <source src="https://videos.pexels.com/video-files/3373028/3373028-sd_640_360_25fps.mp4" type="video/mp4" />
                 </video>
             </div>
