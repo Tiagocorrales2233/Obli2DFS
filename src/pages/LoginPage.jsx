@@ -25,12 +25,12 @@ const LoginPage = () => {
         <>
             <header className="header">
                 <div className="content">
-                    <Link to="/" className="logo">🌤️<span>Weather App</span></Link>
+                    <Link to="/" className="logo"><span>Obligatorio 2 DFS</span></Link>
                 </div>
             </header>
             <div className="container auth">
                 <header>
-                    <h1>🌤️ Login</h1>
+                    <h1> Login</h1>
                 </header>
 
                 <form onSubmit={handleLogin}>

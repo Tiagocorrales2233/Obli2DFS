@@ -24,7 +24,7 @@ const RegisterPage = () => {
         <>
             <header className="header">
                 <div className="content">
-                    <Link to="/" className="logo">🌤️<span>Weather App</span></Link>
+                    <Link to="/" className="logo"><span>Registro Obligatorio 2 DFS</span></Link>
                 </div>
             </header>
             <div className="container auth">

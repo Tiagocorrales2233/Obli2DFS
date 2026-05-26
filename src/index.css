@@ -1,53 +1,233 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* Fuente Nunito */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+/* Font Awesome */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Estilos para el header principal */
+.header {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+.header .content {
+    max-width: 1200px;
+    padding: 0 20px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #273c75;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.header .logo span {
+    margin-left: 0.5rem;
+}
+
+.header .btn {
+    width: 36px;
+    height: 36px;
+    background: #273c75;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header .btn i {
+    transition: transform 0.2s ease;
+}
+
+.header .btn:hover {
+    background: #40739e;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.header .btn:hover i {
+    transform: translateX(2px);
+}
+
+body {
+    background: linear-gradient(135deg, #fbc531, #e1b12c);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    max-width: 900px;
+    width: calc(100% - 40px);
+    padding: 40px;
+    text-align: center;
+    margin: 2rem auto;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #273c75;
+    margin-bottom: 20px;
+}
+
+/* Estilos para la sección de búsqueda */
+.search {
+    margin-bottom: 30px;
+}
+
+.search label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+    text-align: left;
+}
+
+.search input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search input:focus {
+    border-color: #273c75;
+    box-shadow: 0 0 5px rgba(39, 60, 117, 0.3);
+}
+
+.search button {
+    width: 100%;
+    padding: 12px 15px;
+    background: #273c75;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search button:hover {
+    background: #40739e;
+}
+
+/* Estilos para el gráfico */
+.chart {
+    margin-top: 30px;
+    background: #f5f6fa;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    height: 300px;
+}
+
+/* Estilos para formularios de login y registro */
+.group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.group input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.group input:focus {
+    border-color: #273c75;
+    box-shadow: 0 0 5px rgba(39, 60, 117, 0.3);
+}
+
+button:not(.Toastify__close-button){
+    width: 100%;
+    padding: 12px 15px;
+    background: #273c75;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+button:hover:not(.Toastify__close-button) {
+    background: #40739e;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.link, .register-link, .login-link {
+    margin-top: 20px;
+    color: #444;
+}
+
+.link a, .register-link a, .login-link a {
+    color: #273c75;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link a:hover, .register-link a:hover, .login-link a:hover {
+    text-decoration: underline;
+}
+
+.error{
+    color: red;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Ajuste específico para el contenedor de login/registro */
+.container.auth {
+    max-width: 400px;
+    width: calc(100% - 40px);
 }
 
 body {

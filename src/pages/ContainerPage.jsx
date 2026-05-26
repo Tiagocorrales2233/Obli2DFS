@@ -12,7 +12,7 @@ const ContainerPage = () => {
         <>
             <header className="header">
                 <div className="content">
-                    <Link to="/dashboard" className="logo">🌤️<span>Weather App</span></Link>
+                    <Link to="/dashboard" className="logo"><span>Obligatorio 2 DFS</span></Link>
                     <button className="btn" onClick={handleLogout} title="Cerrar sesión">
                         <i className="fas fa-sign-out-alt"></i>
                     </button>
