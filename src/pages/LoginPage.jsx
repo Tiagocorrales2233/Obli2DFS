@@ -23,6 +23,11 @@ const LoginPage = () => {
 
     return (
         <>
+            <div className="video-background">
+                <video autoPlay muted loop>
+                    <source src="https://videos.pexels.com/video-files/3373028/3373028-sd_640_360_25fps.mp4" type="video/mp4" />
+                </video>
+            </div>
             <header className="header">
                 <div className="content">
                     <Link to="/" className="logo"><span>Obligatorio 2 DFS</span></Link>
