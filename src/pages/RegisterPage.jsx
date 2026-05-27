@@ -1,24 +1,43 @@
+import { joiResolver } from "@hookform/resolvers/joi"
+import { useForm } from "react-hook-form"
+import { registerSchema } from "../validators/auth.validators"
 import { Link, useNavigate } from "react-router"
-import { useRef } from "react"
+import { toast } from "react-toastify"
 
 const RegisterPage = () => {
-    const usernameRef = useRef();
-    const passwordRef = useRef();
     const navigate = useNavigate();
 
-    const handleRegister = (e) => {
-        e.preventDefault();
-        const username = usernameRef.current.value;
-        const password = passwordRef.current.value;
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: joiResolver(registerSchema)
+    })
 
-        if (username && password) {
-            localStorage.setItem("usuario", username);
-            alert("Registro exitoso. Iniciando sesión...");
-            navigate("/dashboard/index");
-        } else {
-            alert("Completa todos los campos");
+    const procesarForm = (data) => {
+        console.log(data)
+        
+        // Obtener usuarios registrados del localStorage o crear un array vacío
+        const registeredUsers = JSON.parse(localStorage.getItem("registeredUsers")) || [];
+        
+        // Verificar si el email ya está registrado
+        const userExists = registeredUsers.some(user => user.email === data.email);
+        if (userExists) {
+            toast.error("Este correo ya está registrado");
+            return;
         }
-    };
+        
+        // Agregar el nuevo usuario
+        registeredUsers.push({
+            email: data.email,
+            password: data.password
+        });
+        
+        // Guardar en localStorage
+        localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
+        localStorage.setItem("usuario", data.email);
+        
+        toast.success("¡Registro exitoso!")
+        toast.info("Por favor, inicia sesión con tus credenciales")
+        navigate("/");
+    }
 
     return (
         <>
@@ -29,18 +48,19 @@ const RegisterPage = () => {
             </header>
             <div className="container auth">
                 <header>
-                    <h1>🌤️ Registro</h1>
+                    <h1> Registro</h1>
                 </header>
 
-                <form onSubmit={handleRegister}>
+                <form onSubmit={handleSubmit(procesarForm)}>
                     <div className="group">
-                        <label htmlFor="username">Usuario:</label>
+                        <label htmlFor="email">Correo:</label>
                         <input 
-                            type="text" 
-                            id="username"
-                            ref={usernameRef}
-                            required
+                            type="email" 
+                            id="email"
+                            placeholder="tu@correo.com"
+                            {...register("email")}
                         />
+                        {errors.email && <span className="error">{errors.email.message}</span>}
                     </div>
 
                     <div className="group">
@@ -48,9 +68,21 @@ const RegisterPage = () => {
                         <input 
                             type="password" 
                             id="password"
-                            ref={passwordRef}
-                            required
+                            placeholder="Mínimo 6 caracteres"
+                            {...register("password")}
                         />
+                        {errors.password && <span className="error">{errors.password.message}</span>}
+                    </div>
+
+                    <div className="group">
+                        <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword"
+                            placeholder="Repite tu contraseña"
+                            {...register("confirmPassword")}
+                        />
+                        {errors.confirmPassword && <span className="error">{errors.confirmPassword.message}</span>}
                     </div>
 
                     <button type="submit">Registrarse</button>
