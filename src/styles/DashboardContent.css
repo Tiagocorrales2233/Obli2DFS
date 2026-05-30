@@ -4,7 +4,7 @@
     background: linear-gradient(135deg, #047857 0%, #059669 50%, #047857 100%);
     display: flex;
     flex-direction: column;
-    color: #e2e8f0;
+    color: #ffffff;
     overflow-y: auto;
 }
 
@@ -46,7 +46,7 @@
 
 .subtitle {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #e0e0e0;
     margin: 0;
 }
 
@@ -64,7 +64,7 @@
 
 .user-email {
     font-size: 0.875rem;
-    color: #cbd5e1;
+    color: #f0f0f0;
     font-weight: 500;
 }
 
@@ -88,11 +88,11 @@
 
 .logout-btn {
     padding: 0.5rem 1.5rem;
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #047857;
     border: none;
     border-radius: 0.5rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.875rem;
@@ -100,7 +100,7 @@
 
 .logout-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
 }
 
 /* Hero Section */
@@ -129,7 +129,7 @@
 
 .hero-description {
     font-size: 1.125rem;
-    color: #cbd5e1;
+    color: #f0f0f0;
     margin: 0;
 }
 
@@ -187,7 +187,7 @@
 .stat-card h3 {
     font-size: 1.125rem;
     margin: 0 0 0.5rem 0;
-    color: #FFD700;
+    color: #ffffff;
     font-weight: 600;
 }
 
@@ -202,7 +202,7 @@
 
 .stat-label {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: #d0d0d0;
     margin: 0;
 }
 
@@ -265,7 +265,7 @@
 
 .action-btn p {
     margin: 0;
-    color: #94a3b8;
+    color: #e0e0e0;
     font-size: 0.875rem;
 }
 
@@ -333,7 +333,7 @@
 }
 
 .featured-content p {
-    color: #cbd5e1;
+    color: #f0f0f0;
     margin: 0 0 1.5rem 0;
 }
 
@@ -415,7 +415,7 @@
 
 .info-card p {
     margin: 0;
-    color: #94a3b8;
+    color: #e0e0e0;
     font-size: 0.875rem;
 }
 
@@ -425,7 +425,7 @@
     border-top: none;
     padding: 2rem;
     text-align: center;
-    color: #94a3b8;
+    color: #d0d0d0;
     margin-top: auto;
 }
 
