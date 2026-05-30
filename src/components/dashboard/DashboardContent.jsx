@@ -1,16 +1,9 @@
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import "../../styles/DashboardContent.css";
 
 const DashboardContent = () => {
-    const navigate = useNavigate();
     const { usuario } = useSelector(state => state.auth);
-
-    const handleLogout = () => {
-        localStorage.removeItem("usuario");
-        navigate("/");
-    };
 
     return (
         <div className="dashboard-container">
@@ -18,17 +11,12 @@ const DashboardContent = () => {
             <header className="dashboard-header">
                 <div className="header-content">
                     <div className="logo-section">
-                        <h1 className="logo">⚽ DFS</h1>
-                        <p className="subtitle">Fantasy Football Manager</p>
                     </div>
                     <div className="header-actions">
                         <div className="user-info">
                             <span className="user-email">{usuario?.email}</span>
                             <span className={`user-plan ${usuario?.plan}`}>{usuario?.plan?.toUpperCase()}</span>
                         </div>
-                        <button className="logout-btn" onClick={handleLogout}>
-                            Logout
-                        </button>
                     </div>
                 </div>
             </header>

@@ -10,6 +10,14 @@
     font-family: 'Nunito', sans-serif;
 }
 
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
 /* Estilos para el header principal */
 .header {
     width: 100%;
@@ -136,16 +144,14 @@
 }
 
 body {
-    background: linear-gradient(-45deg, #0B5F1A, #1a8a3d, #2da855, #0B5F1A);
-    background-size: 400% 400%;
-    animation: gradientShift 20s ease infinite;
+    background: linear-gradient(135deg, #047857 0%, #059669 50%, #047857 100%);
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* Video de fondo de fútbol */
