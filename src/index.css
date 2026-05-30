@@ -659,20 +659,14 @@ button:disabled {
     margin-top: 5px;
 }
 
-/* Ajuste específico para el contenedor de login/registro */
-.container.auth {
-    max-width: 400px;
-    width: calc(100% - 40px);
-}
 
-body {
-  margin: 0;
-}
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   text-align: center;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
