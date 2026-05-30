@@ -1,21 +1,7 @@
-import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import ForecastChart from "../components/dashboard/ForecastChart"
-import ForecastForm from "../components/dashboard/ForecastForm"
+import DashboardContent from "../components/dashboard/DashboardContent";
 
 const DashboardPage = () => {
-    const navigate = useNavigate();
+    return <DashboardContent />;
+};
 
-    const handleLogout = () => {
-        localStorage.removeItem("usuario");
-        navigate("/");
-    };
-
-    return (
-        <>
-            
-        </>
-    )
-}
-
-export default DashboardPage
+export default DashboardPage;

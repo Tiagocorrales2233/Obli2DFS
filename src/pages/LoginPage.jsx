@@ -11,7 +11,7 @@ const LoginPage = () => {
             </header>
             <div className="container auth">
                 <header>
-                    <h1>🌤️ Login</h1>
+                    <h1> Login</h1>
                 </header>
 
                 <LoginForm />
