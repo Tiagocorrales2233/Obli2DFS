@@ -15,7 +15,8 @@ html, body, #root {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Estilos para el header principal */
@@ -275,27 +276,30 @@ html::after {
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 25px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(11, 95, 26, 0.15);
-    max-width: 900px;
-    width: calc(100% - 40px);
-    padding: 40px;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: 100%;
+    width: 100%;
+    padding: 0;
     text-align: center;
-    margin: 2rem auto;
+    margin: 0;
     position: relative;
     z-index: 10;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: none;
+    border: none;
 }
 
 /* Ajuste específico para el contenedor de login/registro */
 .container.auth {
-    max-width: 420px;
-    width: calc(100% - 40px);
-    background: rgba(255, 255, 255, 0.97);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    max-width: 100%;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
     animation: containerSlideIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: none;
+    margin: 0;
+    padding: 0;
 }
 
 @keyframes containerSlideIn {
