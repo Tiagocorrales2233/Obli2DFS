@@ -5,6 +5,7 @@ const ContainerPage = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
         navigate("/");
     };
 

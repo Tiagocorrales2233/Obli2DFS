@@ -3,40 +3,58 @@ import { useForm } from "react-hook-form"
 import { registerSchema } from "../validators/auth.validators"
 import { Link, useNavigate } from "react-router"
 import { toast } from "react-toastify"
+import { useDispatch } from "react-redux"
+import { setAuthLoading, setAuthSuccess, setAuthError } from "../features/auth.slice"
+import api from "../api/api"
+import { normalizarAuthResponse } from "../utils/auth"
 
 const RegisterPage = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: joiResolver(registerSchema)
     })
 
-    const procesarForm = (data) => {
-        console.log(data)
-        
-        // Obtener usuarios registrados del localStorage o crear un array vacío
-        const registeredUsers = JSON.parse(localStorage.getItem("registeredUsers")) || [];
-        
-        // Verificar si el email ya está registrado
-        const userExists = registeredUsers.some(user => user.email === data.email);
-        if (userExists) {
-            toast.error("Este correo ya está registrado");
-            return;
+    const procesarForm = async (data) => {
+        try {
+            // Mostrar loading
+            dispatch(setAuthLoading());
+
+            // Llamar a la API para registrarse
+            const response = await api.post('/v1/auth/register', {
+                email: data.email,
+                password: data.password,
+                confirmPassword: data.confirmPassword,
+                rol: "cliente",
+                plan: "plus"
+            });
+
+            // Si el registro es exitoso, hacer auto-login
+            const auth = normalizarAuthResponse(response.data);
+            const usuarioBase = auth.usuario || {};
+            const usuario = {
+                ...(typeof usuarioBase === "object" ? usuarioBase : {}),
+                _id: usuarioBase?._id || usuarioBase?.id || auth.clientId,
+                id: usuarioBase?.id || usuarioBase?._id || auth.clientId,
+                email: usuarioBase?.email || data.email,
+                plan: usuarioBase?.plan || "plus"
+            };
+
+            dispatch(setAuthSuccess({
+                token: auth.token || null,
+                usuario
+            }));
+
+            toast.success("¡Registro exitoso!");
+            navigate("/dashboard/index", { replace: true });
+
+        } catch (error) {
+            // Si hay error, mostrar en Redux y al usuario
+            const mensaje = error.response?.data?.message || error.message || "Error al registrarse";
+            dispatch(setAuthError(mensaje));
+            toast.error(mensaje);
         }
-        
-        // Agregar el nuevo usuario
-        registeredUsers.push({
-            email: data.email,
-            password: data.password
-        });
-        
-        // Guardar en localStorage
-        localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
-        localStorage.setItem("usuario", data.email);
-        
-        toast.success("¡Registro exitoso!")
-        toast.info("Por favor, inicia sesión con tus credenciales")
-        navigate("/");
     }
 
     return (

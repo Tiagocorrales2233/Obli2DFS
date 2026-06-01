@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { isTokenValido } from "../utils/auth";
 
 const initialState = {
     usuario: null,
@@ -21,14 +22,31 @@ const authSlice = createSlice({
         // Login exitoso
         setAuthSuccess: (state, action) => {
             const { token, usuario } = action.payload;
-            state.token = token;
+            if (!usuario) {
+                state.usuario = null;
+                state.token = null;
+                state.isAuthenticated = false;
+                state.loading = false;
+                state.error = "Respuesta de autenticación inválida";
+                localStorage.removeItem("usuario");
+                localStorage.removeItem("token");
+                return;
+            }
+
+            const tokenValido = isTokenValido(token);
+
+            state.token = tokenValido ? token : null;
             state.usuario = usuario;
             state.isAuthenticated = true;
             state.loading = false;
             state.error = null;
             // Guardar en localStorage
             localStorage.setItem("usuario", JSON.stringify(usuario));
-            localStorage.setItem("token", token);
+            if (tokenValido) {
+                localStorage.setItem("token", token);
+            } else {
+                localStorage.removeItem("token");
+            }
         },
 
         // Error en login/register
@@ -51,9 +69,9 @@ const authSlice = createSlice({
         // Restaurar sesión desde localStorage
         restoreSession: (state, action) => {
             const { usuario, token } = action.payload;
-            if (usuario && token) {
+            if (usuario) {
                 state.usuario = usuario;
-                state.token = token;
+                state.token = isTokenValido(token) ? token : null;
                 state.isAuthenticated = true;
             }
         },

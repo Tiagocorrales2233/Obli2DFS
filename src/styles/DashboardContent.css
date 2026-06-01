@@ -37,11 +37,11 @@
 .logo {
     font-size: 2rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 0;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    text-shadow: none;
 }
 
 .subtitle {
@@ -77,8 +77,8 @@
 }
 
 .user-plan.plus {
-    background: rgba(255, 215, 0, 0.1);
-    color: #FFD700;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
 }
 
 .user-plan.premium {
@@ -88,8 +88,8 @@
 
 .logout-btn {
     padding: 0.5rem 1.5rem;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: #047857;
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: #ffffff;
     border: none;
     border-radius: 0.5rem;
     font-weight: 700;
@@ -100,7 +100,6 @@
 
 .logout-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
 }
 
 /* Hero Section */
@@ -120,11 +119,11 @@
     font-size: 3rem;
     font-weight: 800;
     margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1.2;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    text-shadow: none;
 }
 
 .hero-description {
@@ -169,14 +168,14 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.8), transparent);
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
 }
 
 .stat-card:hover {
     border-color: transparent;
     background: transparent;
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2), inset 0 0 20px rgba(255, 215, 0, 0.05);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), inset 0 0 20px rgba(255, 215, 0, 0.1);
 }
 
 .stat-icon {
@@ -187,7 +186,7 @@
 .stat-card h3 {
     font-size: 1.125rem;
     margin: 0 0 0.5rem 0;
-    color: #ffffff;
+    color: #FFD700;
     font-weight: 600;
 }
 
@@ -202,7 +201,7 @@
 
 .stat-label {
     font-size: 0.875rem;
-    color: #d0d0d0;
+    color: #FFD700;
     margin: 0;
 }
 
@@ -214,7 +213,7 @@
 .actions-section h2 {
     font-size: 1.875rem;
     margin: 0 0 1.5rem 0;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -226,7 +225,7 @@
 }
 
 .action-btn {
-    background: transparent;
+    background: rgba(255, 215, 0, 0.12);
     border: none;
     border-radius: 1rem;
     padding: 1.5rem;
@@ -245,15 +244,14 @@
     content: "";
     position: absolute;
     top: 0;
-    left: -100%;
+    left: 0;
     right: 0;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);
-    transition: left 0.5s ease;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
 }
 
 .action-btn:hover::before {
-    left: 100%;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
 }
 
 .action-btn h4 {
@@ -279,19 +277,18 @@
 
 .action-btn.primary {
     border-color: transparent;
-    background: rgba(255, 215, 0, 0.08);
+    background: rgba(255, 215, 0, 0.15);
 }
 
 .action-btn.primary:hover {
     border-color: transparent;
-    background: rgba(255, 215, 0, 0.15);
+    background: rgba(255, 215, 0, 0.25);
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
 }
 
 .action-btn:hover {
     border-color: transparent;
-    background: transparent;
+    background: rgba(255, 215, 0, 0.2);
     transform: translateY(-3px);
 }
 
@@ -321,13 +318,13 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.8), transparent);
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
 }
 
 .featured-content h3 {
     font-size: 1.875rem;
     margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -344,9 +341,9 @@
 }
 
 .position-badge {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.1) 100%);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    color: #FFD700;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #10B981;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-size: 0.875rem;
@@ -355,9 +352,23 @@
 }
 
 .position-badge:hover {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 165, 0, 0.25) 100%);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(52, 211, 153, 0.25) 100%);
     border-color: rgba(255, 215, 0, 0.8);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    animation: goldenGlow 0.6s ease-in-out;
+}
+
+@keyframes goldenGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    }
 }
 
 .featured-image {
@@ -402,12 +413,11 @@
     border-color: transparent;
     background: transparent;
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.15);
 }
 
 .info-card h3 {
     margin: 0 0 0.5rem 0;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 1.125rem;

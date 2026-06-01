@@ -1,9 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import "../../styles/DashboardContent.css";
 
 const DashboardContent = () => {
     const { usuario } = useSelector(state => state.auth);
+    const navigate = useNavigate();
 
     return (
         <div className="dashboard-container">
@@ -63,7 +65,7 @@ const DashboardContent = () => {
                 <section className="actions-section">
                     <h2>Acciones Rápidas</h2>
                     <div className="actions-grid">
-                        <button className="action-btn primary">
+                        <button className="action-btn primary" onClick={() => navigate('/agregar-jugador')}>
                             <span className="action-icon">➕</span>
                             <div>
                                 <h4>Agregar Jugador</h4>
