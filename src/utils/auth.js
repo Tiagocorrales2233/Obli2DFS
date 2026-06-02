@@ -12,6 +12,27 @@ const elegirPrimeroValido = (...valores) => {
     });
 };
 
+export const decodificarPayloadToken = (token) => {
+    if (!isTokenValido(token)) return {};
+
+    try {
+        const payloadBase64 = token.split(".")[1];
+        if (!payloadBase64) return {};
+
+        const payload = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
+        const json = decodeURIComponent(
+            atob(payload)
+                .split("")
+                .map((caracter) => `%${caracter.charCodeAt(0).toString(16).padStart(2, "0")}`)
+                .join("")
+        );
+
+        return JSON.parse(json);
+    } catch {
+        return {};
+    }
+};
+
 export const normalizarAuthResponse = (data) => {
     const root = data ?? {};
     const payload = root.data ?? root;
@@ -48,6 +69,8 @@ export const normalizarAuthResponse = (data) => {
         root.cliente?.token,
         root.cliente?.clientToken
     );
+
+    const tokenPayload = decodificarPayloadToken(token);
 
     const usuario = elegirPrimeroValido(
         payload.usuario,
@@ -87,7 +110,14 @@ export const normalizarAuthResponse = (data) => {
         root.user?._id,
         root.user?.id,
         root.cliente?._id,
-        root.cliente?.id
+        root.cliente?.id,
+        tokenPayload.clientId,
+        tokenPayload.clienteId,
+        tokenPayload.usuarioId,
+        tokenPayload.userId,
+        tokenPayload.id,
+        tokenPayload._id,
+        tokenPayload.sub
     );
 
     return { token, usuario, clientId };

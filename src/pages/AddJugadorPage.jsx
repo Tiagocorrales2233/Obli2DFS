@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import api from '../api/api';
 import { toast } from 'react-toastify';
+import { decodificarPayloadToken } from '../utils/auth';
 import '../styles/AddJugador.css';
 
 const CATEGORIAS_FALLBACK = [
@@ -26,10 +27,12 @@ const normalizarCategoriasResponse = (data) => {
         data,
         data?.data,
         data?.categorias,
+        data?.posiciones,
         data?.categories,
         data?.items,
         data?.results,
         data?.data?.categorias,
+        data?.data?.posiciones,
         data?.data?.categories,
         data?.data?.items,
         data?.data?.results
@@ -47,6 +50,40 @@ const normalizarCategoriasResponse = (data) => {
             nombre: categoria?.nombre || categoria?.name || categoria?.label || categoria?.descripcion || categoria?.posicion || `Categoria ${index + 1}`
         };
     });
+};
+
+const obtenerUsuarioId = (usuario, token) => {
+    const tokenPayload = decodificarPayloadToken(token);
+
+    if (!usuario) return '';
+    if (typeof usuario === 'string') {
+        return (
+            tokenPayload.clientId ||
+            tokenPayload.clienteId ||
+            tokenPayload.usuarioId ||
+            tokenPayload.userId ||
+            tokenPayload.id ||
+            tokenPayload._id ||
+            tokenPayload.sub ||
+            ''
+        );
+    }
+
+    return (
+        usuario._id ||
+        usuario.id ||
+        usuario.clientId ||
+        usuario.clienteId ||
+        usuario.usuarioId ||
+        tokenPayload.clientId ||
+        tokenPayload.clienteId ||
+        tokenPayload.usuarioId ||
+        tokenPayload.userId ||
+        tokenPayload.id ||
+        tokenPayload._id ||
+        tokenPayload.sub ||
+        ''
+    );
 };
 
 const AddJugadorPage = () => {
@@ -149,11 +186,17 @@ const AddJugadorPage = () => {
 
             if (!token) {
                 const jugadoresGuardados = JSON.parse(localStorage.getItem('jugadoresLocales')) || [];
+                let idUsuario = usuario;
+
+                if (usuario && typeof usuario === 'object') {
+                    idUsuario = usuario._id || usuario.email || usuario.id;
+                }
+
                 const jugadorLocal = {
                     _id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
                     ...formData,
                     imagen: imagePreview,
-                    usuario: usuario?._id || usuario?.email || usuario
+                    usuario: idUsuario
                 };
 
                 localStorage.setItem('jugadoresLocales', JSON.stringify([...jugadoresGuardados, jugadorLocal]));
@@ -162,32 +205,40 @@ const AddJugadorPage = () => {
                 return;
             }
 
+            const usuarioId = obtenerUsuarioId(usuario, token);
+
+            if (!usuarioId) {
+                toast.error('No se pudo identificar el usuario autenticado');
+                return;
+            }
+
             // Crear FormData para enviar con imagen
             const form = new FormData();
             form.append('nombre', formData.nombre);
             form.append('apellido', formData.apellido);
-            form.append('edad', formData.edad);
-            form.append('categoria', formData.categoria);
+            form.append('edad', parseInt(formData.edad, 10));
+            form.append('posicion', formData.categoria);
             form.append('nacionalidad', formData.nacionalidad);
-            form.append('usuario', usuario._id || usuario.id || usuario.email); // ID del usuario autenticado
+            form.append('usuario', usuarioId);
             if (formData.imagen) {
                 form.append('imagen', formData.imagen);
             }
 
             // Enviar a la API
-            const response = await api.post('/v1/jugadores', form, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await api.post('/v1/jugadores', form);
 
             toast.success('¡Jugador creado exitosamente!');
             navigate('/dashboard/index'); // Redirigir al dashboard
 
         } catch (error) {
-            const mensaje = error.response?.data?.message || 'Error al crear jugador';
+            const datosError = error.response?.data;
+            const errores = datosError?.error || datosError?.errors;
+            const mensaje = Array.isArray(errores)
+                ? errores.join(', ')
+                : datosError?.message || 'Error al crear jugador';
+
             toast.error(mensaje);
-            console.error(error);
+            console.error('Error al crear jugador:', datosError || error);
         } finally {
             setLoading(false);
         }
