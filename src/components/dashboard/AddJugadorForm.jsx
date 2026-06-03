@@ -7,22 +7,6 @@ import { setCategorias, setCategoriasError, setCategoriasLoading } from '../../f
 import { decodificarPayloadToken } from '../../utils/auth';
 import '../../styles/AddJugador.css';
 
-const CATEGORIAS_FALLBACK = [
-    { _id: 'arquero', nombre: 'Arquero' },
-    { _id: 'defensa', nombre: 'Defensa' },
-    { _id: 'lateral', nombre: 'Lateral' },
-    { _id: 'libero', nombre: 'Libero' },
-    { _id: 'volante', nombre: 'Volante' },
-    { _id: 'pivote', nombre: 'Pivote' },
-    { _id: 'mediocampista', nombre: 'Mediocampista' },
-    { _id: 'centrocampista', nombre: 'Centrocampista' },
-    { _id: 'carrilero', nombre: 'Carrilero' },
-    { _id: 'extremo', nombre: 'Extremo' },
-    { _id: 'delantero', nombre: 'Delantero' },
-    { _id: 'enganche', nombre: 'Enganche' },
-    { _id: 'falso-9', nombre: 'Falso 9' }
-];
-
 const normalizarCategoriasResponse = (data) => {
     const listasPosibles = [
         data,
@@ -110,12 +94,14 @@ const AddJugadorForm = () => {
             setCargandoCategorias(true);
 
             try {
-                const response = await api.get('/v1/categorias');
+                const response = await api.get('/v1/categorias', {
+                    params: { _t: Date.now() }
+                });
                 const categoriasApi = normalizarCategoriasResponse(response.data);
-                dispatch(setCategorias(categoriasApi.length > 0 ? categoriasApi : CATEGORIAS_FALLBACK));
+                dispatch(setCategorias(categoriasApi));
             } catch (error) {
                 dispatch(setCategoriasError(error.toString()));
-                dispatch(setCategorias(CATEGORIAS_FALLBACK));
+                dispatch(setCategorias([]));
                 toast.error('Error al obtener categorias');
                 console.error(error);
             } finally {
@@ -267,7 +253,11 @@ const AddJugadorForm = () => {
                                     disabled={cargandoCategorias}
                                 >
                                     <option value="">
-                                        {cargandoCategorias ? 'Cargando categorias...' : 'Selecciona una posicion'}
+                                        {cargandoCategorias
+                                            ? 'Cargando categorias...'
+                                            : categoriasParaMostrar.length > 0
+                                                ? 'Selecciona una posicion'
+                                                : 'No hay categorias disponibles'}
                                     </option>
                                     {categoriasParaMostrar.map(cat => (
                                         <option key={cat._id} value={cat._id}>
