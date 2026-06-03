@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "^2.12.0",
     "axios": "^1.16.1",
     "chart.js": "^4.5.1",
+    "joi": "^18.2.1",
     "react": "^19.2.6",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "^19.2.6",
