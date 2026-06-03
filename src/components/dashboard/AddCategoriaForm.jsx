@@ -105,9 +105,9 @@ const AddCategoriaForm = () => {
         } catch (error) {
             const datosError = error.response?.data;
             const errores = datosError?.error || datosError?.errors;
-            const mensaje = Array.isArray(errores)
-                ? errores.join(', ')
-                : datosError?.message || 'Error al crear categoria';
+            const mensaje = Array.isArray(errores) && errores.length > 0
+                ? 'La posicion creada no es valida'
+                : datosError?.message || 'La posicion creada no es valida';
 
             toast.error(mensaje);
             console.error('Error al crear categoria:', datosError || error);
