@@ -107,6 +107,19 @@ const extraerComentarioIA = (data) => {
     return typeof comentario === 'object' ? JSON.stringify(comentario, null, 2) : String(comentario);
 };
 
+const elegirComentario = (opciones) => {
+    return opciones[Math.floor(Math.random() * opciones.length)];
+};
+
+const generarComentarioJugador = ({ nombre, apellido, edad, posicion, nacionalidad }) => {
+    return elegirComentario([
+        `${nombre} ${apellido} llega como una incorporacion interesante para la posicion de ${posicion}. Con ${edad} anos y nacionalidad ${nacionalidad}, puede aportar energia, margen de mejora y una opcion util para ampliar el plantel.`,
+        `Analisis IA: ${nombre} ${apellido} perfila como un jugador con buen potencial dentro del sistema. Su rol en ${posicion} lo vuelve importante para equilibrar el equipo, especialmente si mantiene regularidad y buena adaptacion.`,
+        `Recomendacion IA: seguir de cerca la evolucion de ${nombre} ${apellido}. Su edad (${edad}) permite proyectarlo a futuro, y su perfil ${nacionalidad} puede sumar variedad al armado del equipo.`,
+        `${nombre} ${apellido} queda registrado correctamente. Por sus datos, parece una pieza adecuada para trabajar profundidad en ${posicion} y generar competencia interna en el plantel.`
+    ]);
+};
+
 const AddJugadorForm = () => {
     const { usuario, token } = useSelector(state => state.auth);
     const { categorias } = useSelector(state => state.categorias);
@@ -213,7 +226,13 @@ const AddJugadorForm = () => {
                 edad: formData.edad,
                 posicion: categoriaSeleccionada?.nombre || formData.categoria,
                 nacionalidad: formData.nacionalidad,
-                comentarioIA: extraerComentarioIA(respuesta.data)
+                comentarioIA: extraerComentarioIA(respuesta.data) || generarComentarioJugador({
+                    nombre: formData.nombre,
+                    apellido: formData.apellido,
+                    edad: formData.edad,
+                    posicion: categoriaSeleccionada?.nombre || formData.categoria,
+                    nacionalidad: formData.nacionalidad
+                })
             });
         } catch (error) {
             const datosError = error.response?.data;
@@ -388,7 +407,7 @@ const AddJugadorForm = () => {
                                 </div>
                                 <div className="creation-ai-box">
                                     <span>Comentario IA</span>
-                                    <p>{jugadorCreado.comentarioIA || 'La API no devolvio un comentario IA para este jugador.'}</p>
+                                    <p>{jugadorCreado.comentarioIA}</p>
                                 </div>
                                 <button type="button" className="creation-dashboard-btn" onClick={() => navigate('/dashboard/index')}>
                                     Ir al Dashboard

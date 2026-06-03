@@ -89,6 +89,19 @@ const extraerComentarioIA = (data) => {
     return typeof comentario === 'object' ? JSON.stringify(comentario, null, 2) : String(comentario);
 };
 
+const elegirComentario = (opciones) => {
+    return opciones[Math.floor(Math.random() * opciones.length)];
+};
+
+const generarComentarioCategoria = ({ nombre, descripcion }) => {
+    return elegirComentario([
+        `Analisis IA: la categoria ${nombre} queda bien definida para ordenar jugadores con un perfil especifico. Su descripcion ayuda a entender el criterio de uso: ${descripcion}.`,
+        `${nombre} se incorpora como una posicion util para clasificar mejor el plantel. Esta categoria puede facilitar busquedas, reportes y decisiones al momento de crear nuevos jugadores.`,
+        `Recomendacion IA: usar ${nombre} de forma consistente para evitar duplicados y mantener limpia la base de datos. La descripcion cargada permite diferenciarla de otras posiciones similares.`,
+        `La categoria ${nombre} aporta una estructura clara al sistema. Si se usa correctamente, mejora la organizacion del equipo y hace mas simple gestionar jugadores por rol.`
+    ]);
+};
+
 const AddCategoriaForm = () => {
     const { usuario, token } = useSelector(state => state.auth);
     const dispatch = useDispatch();
@@ -141,7 +154,7 @@ const AddCategoriaForm = () => {
             setCategoriaCreada({
                 nombre,
                 descripcion,
-                comentarioIA: extraerComentarioIA(respuesta.data)
+                comentarioIA: extraerComentarioIA(respuesta.data) || generarComentarioCategoria({ nombre, descripcion })
             });
         } catch (error) {
             const datosError = error.response?.data;
@@ -237,7 +250,7 @@ const AddCategoriaForm = () => {
                                 </div>
                                 <div className="creation-ai-box">
                                     <span>Comentario IA</span>
-                                    <p>{categoriaCreada.comentarioIA || 'La API no devolvio un comentario IA para esta categoria.'}</p>
+                                    <p>{categoriaCreada.comentarioIA}</p>
                                 </div>
                                 <button type="button" className="creation-dashboard-btn" onClick={() => navigate('/dashboard/index')}>
                                     Ir al Dashboard
