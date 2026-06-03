@@ -224,44 +224,50 @@
     gap: 1.5rem;
 }
 
-.action-btn {
+.actions-grid .action-btn {
+    width: 100%;
+    max-width: none;
     background: rgba(255, 215, 0, 0.12);
     border: none;
     border-radius: 1rem;
     padding: 1.5rem;
+    margin: 0;
     text-align: left;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
     display: flex;
     align-items: flex-start;
     gap: 1rem;
     backdrop-filter: none;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    box-shadow: none;
+    letter-spacing: normal;
+    text-transform: none;
+    color: inherit;
 }
 
-.action-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+.actions-grid .action-btn::before,
+.actions-grid .action-btn::after {
+    content: none !important;
+    display: none !important;
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
 }
 
-.action-btn:hover::before {
-    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
-}
-
-.action-btn h4 {
+.actions-grid .action-btn h4 {
     margin: 0 0 0.5rem 0;
     color: #FFD700;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
 }
 
-.action-btn p {
+.actions-grid .action-btn p {
     margin: 0;
     color: #e0e0e0;
     font-size: 0.875rem;
@@ -275,21 +281,54 @@
     justify-content: center;
 }
 
-.action-btn.primary {
+.actions-grid .action-btn.primary {
     border-color: transparent;
     background: rgba(255, 215, 0, 0.15);
 }
 
-.action-btn.primary:hover {
+.actions-grid .action-btn:hover,
+.actions-grid .action-btn:active,
+.actions-grid .action-btn:focus,
+.actions-grid .action-btn:focus-visible,
+.actions-grid .action-btn.primary:hover,
+.actions-grid .action-btn.primary:active,
+.actions-grid .action-btn.primary:focus,
+.actions-grid .action-btn.primary:focus-visible {
     border-color: transparent;
-    background: rgba(255, 215, 0, 0.25);
-    transform: translateY(-3px);
+    box-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    outline: none;
+    color: inherit;
 }
 
-.action-btn:hover {
-    border-color: transparent;
-    background: rgba(255, 215, 0, 0.2);
-    transform: translateY(-3px);
+.actions-grid .action-btn:hover,
+.actions-grid .action-btn:active,
+.actions-grid .action-btn:focus,
+.actions-grid .action-btn:focus-visible {
+    background: rgba(255, 215, 0, 0.12);
+}
+
+.actions-grid .action-btn.primary:hover,
+.actions-grid .action-btn.primary:active,
+.actions-grid .action-btn.primary:focus,
+.actions-grid .action-btn.primary:focus-visible {
+    background: rgba(255, 215, 0, 0.15);
+}
+
+.actions-grid .action-btn:hover::before,
+.actions-grid .action-btn:hover::after,
+.actions-grid .action-btn:active::before,
+.actions-grid .action-btn:active::after,
+.actions-grid .action-btn:focus::before,
+.actions-grid .action-btn:focus::after {
+    content: none !important;
+    display: none !important;
+    box-shadow: none;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
 }
 
 /* Featured Section */
