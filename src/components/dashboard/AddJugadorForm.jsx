@@ -3,15 +3,97 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import api from '../../api/api';
 import { toast } from 'react-toastify';
-import '../../styles/AddJugador.css';
 import { setCategorias, setCategoriasError, setCategoriasLoading } from '../../features/categorias.slice';
+import { decodificarPayloadToken } from '../../utils/auth';
+import '../../styles/AddJugador.css';
+
+const CATEGORIAS_FALLBACK = [
+    { _id: 'arquero', nombre: 'Arquero' },
+    { _id: 'defensa', nombre: 'Defensa' },
+    { _id: 'lateral', nombre: 'Lateral' },
+    { _id: 'libero', nombre: 'Libero' },
+    { _id: 'volante', nombre: 'Volante' },
+    { _id: 'pivote', nombre: 'Pivote' },
+    { _id: 'mediocampista', nombre: 'Mediocampista' },
+    { _id: 'centrocampista', nombre: 'Centrocampista' },
+    { _id: 'carrilero', nombre: 'Carrilero' },
+    { _id: 'extremo', nombre: 'Extremo' },
+    { _id: 'delantero', nombre: 'Delantero' },
+    { _id: 'enganche', nombre: 'Enganche' },
+    { _id: 'falso-9', nombre: 'Falso 9' }
+];
+
+const normalizarCategoriasResponse = (data) => {
+    const listasPosibles = [
+        data,
+        data?.data,
+        data?.categorias,
+        data?.posiciones,
+        data?.categories,
+        data?.items,
+        data?.results,
+        data?.data?.categorias,
+        data?.data?.posiciones,
+        data?.data?.categories,
+        data?.data?.items,
+        data?.data?.results
+    ];
+
+    const lista = listasPosibles.find(Array.isArray) || [];
+
+    return lista.map((categoria, index) => {
+        if (typeof categoria === 'string') {
+            return { _id: categoria, nombre: categoria };
+        }
+
+        return {
+            _id: categoria?._id || categoria?.id || categoria?.value || categoria?.nombre || categoria?.name || String(index),
+            nombre: categoria?.nombre || categoria?.name || categoria?.label || categoria?.descripcion || categoria?.posicion || `Categoria ${index + 1}`
+        };
+    });
+};
+
+const obtenerUsuarioId = (usuario, token) => {
+    const tokenPayload = decodificarPayloadToken(token);
+
+    if (!usuario) return '';
+    if (typeof usuario === 'string') {
+        return (
+            tokenPayload.clientId ||
+            tokenPayload.clienteId ||
+            tokenPayload.usuarioId ||
+            tokenPayload.userId ||
+            tokenPayload.id ||
+            tokenPayload._id ||
+            tokenPayload.sub ||
+            ''
+        );
+    }
+
+    return (
+        usuario._id ||
+        usuario.id ||
+        usuario.clientId ||
+        usuario.clienteId ||
+        usuario.usuarioId ||
+        tokenPayload.clientId ||
+        tokenPayload.clienteId ||
+        tokenPayload.usuarioId ||
+        tokenPayload.userId ||
+        tokenPayload.id ||
+        tokenPayload._id ||
+        tokenPayload.sub ||
+        ''
+    );
+};
 
 const AddJugadorForm = () => {
-    const { usuario } = useSelector(state => state.auth);
+    const { usuario, token } = useSelector(state => state.auth);
     const { categorias } = useSelector(state => state.categorias);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [cargandoCategorias, setCargandoCategorias] = useState(true);
     const [imagePreview, setImagePreview] = useState(null);
     const [formData, setFormData] = useState({
         nombre: '',
@@ -22,23 +104,28 @@ const AddJugadorForm = () => {
         imagen: null
     });
 
-    // Obtener categorías al cargar el componente
     useEffect(() => {
         const obtenerCategorias = async () => {
             dispatch(setCategoriasLoading());
+            setCargandoCategorias(true);
+
             try {
                 const response = await api.get('/v1/categorias');
-                dispatch(setCategorias(response.data));
+                const categoriasApi = normalizarCategoriasResponse(response.data);
+                dispatch(setCategorias(categoriasApi.length > 0 ? categoriasApi : CATEGORIAS_FALLBACK));
             } catch (error) {
                 dispatch(setCategoriasError(error.toString()));
-                toast.error('Error al obtener categorías');
+                dispatch(setCategorias(CATEGORIAS_FALLBACK));
+                toast.error('Error al obtener categorias');
                 console.error(error);
+            } finally {
+                setCargandoCategorias(false);
             }
         };
+
         obtenerCategorias();
     }, [dispatch]);
 
-    // Manejar cambios en inputs de texto
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -47,63 +134,65 @@ const AddJugadorForm = () => {
         }));
     };
 
-    // Manejar cambio de imagen
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            setFormData(prev => ({
-                ...prev,
-                imagen: file
-            }));
+        if (!file) return;
 
-            // Mostrar preview de la imagen
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
+        setFormData(prev => ({
+            ...prev,
+            imagen: file
+        }));
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
     };
 
-    // Enviar formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // Validaciones básicas
+
         if (!formData.nombre || !formData.apellido || !formData.edad || !formData.categoria || !formData.nacionalidad) {
             toast.error('Completa todos los campos');
+            return;
+        }
+
+        const usuarioId = obtenerUsuarioId(usuario, token);
+
+        if (!usuarioId) {
+            toast.error('No se pudo identificar el usuario autenticado');
             return;
         }
 
         try {
             setLoading(true);
 
-            // Crear FormData para enviar con imagen
             const form = new FormData();
             form.append('nombre', formData.nombre);
             form.append('apellido', formData.apellido);
-            form.append('edad', formData.edad);
-            form.append('categoria', formData.categoria);
+            form.append('edad', parseInt(formData.edad, 10));
+            form.append('posicion', formData.categoria);
             form.append('nacionalidad', formData.nacionalidad);
-            form.append('usuario', usuario._id); // ID del usuario autenticado
+            form.append('usuario', usuarioId);
+
             if (formData.imagen) {
                 form.append('imagen', formData.imagen);
             }
 
-            // Enviar a la API
-            const response = await api.post('/v1/jugadores', form, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await api.post('/v1/jugadores', form);
 
-            toast.success('¡Jugador creado exitosamente!');
-            navigate('/dashboard/index'); // Redirigir al dashboard
-
+            toast.success('Jugador creado exitosamente');
+            navigate('/dashboard/index');
         } catch (error) {
-            const mensaje = error.response?.data?.message || 'Error al crear jugador';
+            const datosError = error.response?.data;
+            const errores = datosError?.error || datosError?.errors;
+            const mensaje = Array.isArray(errores)
+                ? errores.join(', ')
+                : datosError?.message || 'Error al crear jugador';
+
             toast.error(mensaje);
-            console.error(error);
+            console.error('Error al crear jugador:', datosError || error);
         } finally {
             setLoading(false);
         }
@@ -113,19 +202,19 @@ const AddJugadorForm = () => {
         navigate('/dashboard/index');
     };
 
+    const categoriasParaMostrar = Array.isArray(categorias) ? categorias : [];
+
     return (
         <div className="add-jugador-container">
-            {/* Header */}
             <header className="add-jugador-header">
                 <div className="add-jugador-header-content">
                     <h1 className="add-jugador-title">Crear Nuevo Jugador</h1>
                     <a href="/dashboard/index" className="back-link">
-                        ← Volver al Dashboard
+                        Volver al Dashboard
                     </a>
                 </div>
             </header>
 
-            {/* Main Content */}
             <main className="add-jugador-main">
                 <div className="add-jugador-wrapper">
                     <div className="form-card">
@@ -152,7 +241,7 @@ const AddJugadorForm = () => {
                                     name="apellido"
                                     value={formData.apellido}
                                     onChange={handleChange}
-                                    placeholder="Ej: Pérez"
+                                    placeholder="Ej: Perez"
                                 />
                             </div>
 
@@ -169,15 +258,18 @@ const AddJugadorForm = () => {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="categoria">Categoría:</label>
+                                <label htmlFor="categoria">Posicion:</label>
                                 <select
                                     id="categoria"
                                     name="categoria"
                                     value={formData.categoria}
                                     onChange={handleChange}
+                                    disabled={cargandoCategorias}
                                 >
-                                    <option value="">Selecciona una categoría</option>
-                                    {categorias.map(cat => (
+                                    <option value="">
+                                        {cargandoCategorias ? 'Cargando categorias...' : 'Selecciona una posicion'}
+                                    </option>
+                                    {categoriasParaMostrar.map(cat => (
                                         <option key={cat._id} value={cat._id}>
                                             {cat.nombre}
                                         </option>
@@ -201,9 +293,9 @@ const AddJugadorForm = () => {
                                 <label htmlFor="imagen">Foto del Jugador:</label>
                                 <div className="image-upload-area">
                                     <label htmlFor="imagen" className="image-upload-label">
-                                        <span className="icon">📸</span>
+                                        <span className="icon">+</span>
                                         <span className="text">Selecciona una imagen</span>
-                                        <span className="subtext">PNG, JPG, GIF (máx. 5MB)</span>
+                                        <span className="subtext">PNG, JPG, GIF (max. 5MB)</span>
                                     </label>
                                     <input
                                         type="file"
@@ -221,16 +313,16 @@ const AddJugadorForm = () => {
                             </div>
 
                             <div className="form-buttons">
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="btn-cancel"
                                     onClick={handleCancel}
                                     disabled={loading}
                                 >
                                     Cancelar
                                 </button>
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     className="btn-submit"
                                     disabled={loading}
                                 >
