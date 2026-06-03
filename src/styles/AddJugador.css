@@ -236,6 +236,87 @@
     animation: spin 0.6s linear infinite;
 }
 
+.creation-summary {
+    margin-top: 2rem;
+    border: 2px solid rgba(255, 215, 0, 0.8);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.creation-summary-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.creation-summary-header span,
+.creation-ai-box span,
+.creation-summary-grid span {
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 700;
+}
+
+.creation-summary-header strong {
+    color: #FFD700;
+    font-size: 1.15rem;
+    text-align: right;
+}
+
+.creation-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.creation-summary-grid div,
+.creation-ai-box {
+    border-radius: 0.75rem;
+    background: rgba(4, 120, 87, 0.78);
+    padding: 0.85rem;
+}
+
+.creation-summary-grid strong {
+    display: block;
+    color: #ffffff;
+    margin-top: 0.25rem;
+    overflow-wrap: anywhere;
+}
+
+.creation-ai-box p {
+    color: #ffffff;
+    margin: 0.45rem 0 0 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.creation-dashboard-btn {
+    width: 100%;
+    max-width: none;
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #047857;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.creation-dashboard-btn::before,
+.creation-dashboard-btn::after {
+    content: none;
+    display: none;
+}
+
 @keyframes spin {
     to {
         transform: translateY(-50%) rotate(360deg);

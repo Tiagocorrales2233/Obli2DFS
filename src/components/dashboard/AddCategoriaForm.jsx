@@ -53,11 +53,48 @@ const obtenerUsuarioId = (usuario, token) => {
     );
 };
 
+const extraerComentarioIA = (data) => {
+    const posibles = [
+        data?.comentarioIA,
+        data?.comentarioIa,
+        data?.comentario_ia,
+        data?.comentario,
+        data?.comment,
+        data?.ia,
+        data?.ai,
+        data?.analisis,
+        data?.analysis,
+        data?.data?.comentarioIA,
+        data?.data?.comentarioIa,
+        data?.data?.comentario_ia,
+        data?.data?.comentario,
+        data?.data?.comment,
+        data?.data?.ia,
+        data?.data?.ai,
+        data?.data?.analisis,
+        data?.data?.analysis,
+        data?.categoria?.comentarioIA,
+        data?.categoria?.comentario,
+        data?.category?.comentarioIA,
+        data?.category?.comment
+    ];
+
+    const comentario = posibles.find(valor => {
+        if (valor === null || valor === undefined) return false;
+        if (typeof valor === 'object') return Object.keys(valor).length > 0;
+        return String(valor).trim() !== '';
+    });
+
+    if (!comentario) return '';
+    return typeof comentario === 'object' ? JSON.stringify(comentario, null, 2) : String(comentario);
+};
+
 const AddCategoriaForm = () => {
     const { usuario, token } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [categoriaCreada, setCategoriaCreada] = useState(null);
     const [formData, setFormData] = useState({
         nombre: '',
         descripcion: ''
@@ -101,7 +138,11 @@ const AddCategoriaForm = () => {
             const respuesta = await api.post('/v1/categorias', payload);
             dispatch(addCategoria(respuesta.data?.data || respuesta.data || payload));
             toast.success('Categoria creada exitosamente');
-            navigate('/dashboard/index');
+            setCategoriaCreada({
+                nombre,
+                descripcion,
+                comentarioIA: extraerComentarioIA(respuesta.data)
+            });
         } catch (error) {
             const datosError = error.response?.data;
             const errores = datosError?.error || datosError?.errors;
@@ -181,6 +222,28 @@ const AddCategoriaForm = () => {
                                 </button>
                             </div>
                         </form>
+
+                        {categoriaCreada && (
+                            <section className="creation-summary">
+                                <div className="creation-summary-header">
+                                    <span>Categoria creada</span>
+                                    <strong>{categoriaCreada.nombre}</strong>
+                                </div>
+                                <div className="creation-summary-grid single">
+                                    <div>
+                                        <span>Descripcion</span>
+                                        <strong>{categoriaCreada.descripcion}</strong>
+                                    </div>
+                                </div>
+                                <div className="creation-ai-box">
+                                    <span>Comentario IA</span>
+                                    <p>{categoriaCreada.comentarioIA || 'La API no devolvio un comentario IA para esta categoria.'}</p>
+                                </div>
+                                <button type="button" className="creation-dashboard-btn" onClick={() => navigate('/dashboard/index')}>
+                                    Ir al Dashboard
+                                </button>
+                            </section>
+                        )}
                     </div>
                 </div>
             </main>

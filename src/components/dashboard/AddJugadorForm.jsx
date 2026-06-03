@@ -71,6 +71,42 @@ const obtenerUsuarioId = (usuario, token) => {
     );
 };
 
+const extraerComentarioIA = (data) => {
+    const posibles = [
+        data?.comentarioIA,
+        data?.comentarioIa,
+        data?.comentario_ia,
+        data?.comentario,
+        data?.comment,
+        data?.ia,
+        data?.ai,
+        data?.analisis,
+        data?.analysis,
+        data?.data?.comentarioIA,
+        data?.data?.comentarioIa,
+        data?.data?.comentario_ia,
+        data?.data?.comentario,
+        data?.data?.comment,
+        data?.data?.ia,
+        data?.data?.ai,
+        data?.data?.analisis,
+        data?.data?.analysis,
+        data?.jugador?.comentarioIA,
+        data?.jugador?.comentario,
+        data?.player?.comentarioIA,
+        data?.player?.comment
+    ];
+
+    const comentario = posibles.find(valor => {
+        if (valor === null || valor === undefined) return false;
+        if (typeof valor === 'object') return Object.keys(valor).length > 0;
+        return String(valor).trim() !== '';
+    });
+
+    if (!comentario) return '';
+    return typeof comentario === 'object' ? JSON.stringify(comentario, null, 2) : String(comentario);
+};
+
 const AddJugadorForm = () => {
     const { usuario, token } = useSelector(state => state.auth);
     const { categorias } = useSelector(state => state.categorias);
@@ -79,6 +115,7 @@ const AddJugadorForm = () => {
     const [loading, setLoading] = useState(false);
     const [cargandoCategorias, setCargandoCategorias] = useState(true);
     const [imagePreview, setImagePreview] = useState(null);
+    const [jugadorCreado, setJugadorCreado] = useState(null);
     const [formData, setFormData] = useState({
         nombre: '',
         apellido: '',
@@ -166,10 +203,18 @@ const AddJugadorForm = () => {
                 form.append('imagen', formData.imagen);
             }
 
-            await api.post('/v1/jugadores', form);
+            const respuesta = await api.post('/v1/jugadores', form);
+            const categoriaSeleccionada = categoriasParaMostrar.find(cat => cat._id === formData.categoria);
 
             toast.success('Jugador creado exitosamente');
-            navigate('/dashboard/index');
+            setJugadorCreado({
+                nombre: formData.nombre,
+                apellido: formData.apellido,
+                edad: formData.edad,
+                posicion: categoriaSeleccionada?.nombre || formData.categoria,
+                nacionalidad: formData.nacionalidad,
+                comentarioIA: extraerComentarioIA(respuesta.data)
+            });
         } catch (error) {
             const datosError = error.response?.data;
             const errores = datosError?.error || datosError?.errors;
@@ -320,6 +365,36 @@ const AddJugadorForm = () => {
                                 </button>
                             </div>
                         </form>
+
+                        {jugadorCreado && (
+                            <section className="creation-summary">
+                                <div className="creation-summary-header">
+                                    <span>Jugador creado</span>
+                                    <strong>{jugadorCreado.nombre} {jugadorCreado.apellido}</strong>
+                                </div>
+                                <div className="creation-summary-grid">
+                                    <div>
+                                        <span>Edad</span>
+                                        <strong>{jugadorCreado.edad}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Posicion</span>
+                                        <strong>{jugadorCreado.posicion}</strong>
+                                    </div>
+                                    <div>
+                                        <span>Nacionalidad</span>
+                                        <strong>{jugadorCreado.nacionalidad}</strong>
+                                    </div>
+                                </div>
+                                <div className="creation-ai-box">
+                                    <span>Comentario IA</span>
+                                    <p>{jugadorCreado.comentarioIA || 'La API no devolvio un comentario IA para este jugador.'}</p>
+                                </div>
+                                <button type="button" className="creation-dashboard-btn" onClick={() => navigate('/dashboard/index')}>
+                                    Ir al Dashboard
+                                </button>
+                            </section>
+                        )}
                     </div>
                 </div>
             </main>

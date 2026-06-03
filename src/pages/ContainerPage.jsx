@@ -13,7 +13,7 @@ const ContainerPage = () => {
         <>
             <header className="header">
                 <div className="content">
-                    <Link to="/dashboard" className="logo"><span>Obligatorio 2 DFS</span></Link>
+                    <Link to="/dashboard/index" className="logo"><span>Gestor De Jugadores</span></Link>
                     <button className="btn" onClick={handleLogout} title="Cerrar sesión">
                         <i className="fas fa-sign-out-alt"></i>
                     </button>
