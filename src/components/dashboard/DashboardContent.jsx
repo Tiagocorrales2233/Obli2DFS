@@ -1,19 +1,98 @@
-import { useRef, useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import api from "../../api/api";
 import "../../styles/DashboardContent.css";
+
+const normalizarLista = (data, posiblesClaves = []) => {
+    const listasPosibles = [
+        data,
+        data?.data,
+        data?.items,
+        data?.results,
+        data?.docs,
+        ...posiblesClaves.map(clave => data?.[clave]),
+        ...posiblesClaves.map(clave => data?.data?.[clave])
+    ];
+
+    return listasPosibles.find(Array.isArray) || [];
+};
+
+const obtenerNombreCategoria = (categoria, index) => {
+    if (typeof categoria === "string") return categoria;
+
+    return (
+        categoria?.nombre ||
+        categoria?.name ||
+        categoria?.label ||
+        categoria?.descripcion ||
+        `Categoria ${index + 1}`
+    );
+};
 
 const DashboardContent = () => {
     const { usuario } = useSelector(state => state.auth);
     const navigate = useNavigate();
+    const [resumen, setResumen] = useState({
+        jugadores: 0,
+        categorias: 0,
+        categoriasLista: []
+    });
+    const [cargandoResumen, setCargandoResumen] = useState(true);
+
+    const cargarResumen = useCallback(async () => {
+        setCargandoResumen(true);
+
+        try {
+            const cacheBuster = Date.now();
+            const [jugadoresResponse, categoriasResponse] = await Promise.all([
+                api.get("/v1/jugadores", { params: { _t: cacheBuster } }),
+                api.get("/v1/categorias", { params: { _t: cacheBuster } })
+            ]);
+
+            const jugadores = normalizarLista(jugadoresResponse.data, ["jugadores", "players"]);
+            const categorias = normalizarLista(categoriasResponse.data, ["categorias", "posiciones", "categories"]);
+
+            setResumen({
+                jugadores: jugadores.length,
+                categorias: categorias.length,
+                categoriasLista: categorias
+            });
+        } catch (error) {
+            console.error("Error al obtener resumen del dashboard:", error.response?.data || error);
+            setResumen({
+                jugadores: 0,
+                categorias: 0,
+                categoriasLista: []
+            });
+        } finally {
+            setCargandoResumen(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        cargarResumen();
+
+        const refrescarSiVuelveLaVentana = () => {
+            if (!document.hidden) {
+                cargarResumen();
+            }
+        };
+
+        document.addEventListener("visibilitychange", refrescarSiVuelveLaVentana);
+        window.addEventListener("focus", cargarResumen);
+
+        return () => {
+            document.removeEventListener("visibilitychange", refrescarSiVuelveLaVentana);
+            window.removeEventListener("focus", cargarResumen);
+        };
+    }, [cargarResumen]);
 
     return (
         <div className="dashboard-container">
-            {/* Header */}
             <header className="dashboard-header">
                 <div className="header-content">
-                    <div className="logo-section">
-                    </div>
+                    <div className="logo-section"></div>
                     <div className="header-actions">
                         <div className="user-info">
                             <span className="user-email">{usuario?.email}</span>
@@ -23,56 +102,40 @@ const DashboardContent = () => {
                 </div>
             </header>
 
-            {/* Hero Section */}
             <section className="hero">
                 <div className="hero-content">
                     <h2 className="hero-title">Bienvenido a tu Gestor de Jugadores</h2>
-                    <p className="hero-description">Administra jugadores, posiciones y crea tu equipo de ensueño</p>
+                    <p className="hero-description">Administra jugadores, posiciones y crea tu equipo de ensueno</p>
                 </div>
             </section>
 
-            {/* Main Grid */}
             <main className="dashboard-main">
-                {/* Stats Cards */}
                 <section className="stats-section">
                     <div className="stat-card">
-                        <div className="stat-icon">👥</div>
+                        <div className="stat-icon">+</div>
                         <h3>Jugadores</h3>
-                        <p className="stat-number">0</p>
+                        <p className="stat-number">{cargandoResumen ? "..." : resumen.jugadores}</p>
                         <p className="stat-label">Total en el sistema</p>
                     </div>
                     <div className="stat-card">
-                        <div className="stat-icon">⚙️</div>
+                        <div className="stat-icon">#</div>
                         <h3>Posiciones</h3>
-                        <p className="stat-number">14</p>
+                        <p className="stat-number">{cargandoResumen ? "..." : resumen.categorias}</p>
                         <p className="stat-label">Disponibles</p>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">🎯</div>
-                        <h3>Tu Equipo</h3>
-                        <p className="stat-number">0</p>
-                        <p className="stat-label">Jugadores seleccionados</p>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">🏆</div>
-                        <h3>Puntos</h3>
-                        <p className="stat-number">0</p>
-                        <p className="stat-label">Tu puntuación total</p>
                     </div>
                 </section>
 
-                {/* Quick Actions */}
                 <section className="actions-section">
-                    <h2>Acciones Rápidas</h2>
+                    <h2>Acciones Rapidas</h2>
                     <div className="actions-grid">
-                        <button className="action-btn primary" onClick={() => navigate('/agregar-jugador')}>
-                            <span className="action-icon">➕</span>
+                        <button className="action-btn primary" onClick={() => navigate("/agregar-jugador")}>
+                            <span className="action-icon">+</span>
                             <div>
                                 <h4>Agregar Jugador</h4>
                                 <p>Crea un nuevo jugador en el sistema</p>
                             </div>
                         </button>
-                        <button className="action-btn primary" onClick={() => navigate('/agregar-categoria')}>
+                        <button className="action-btn primary" onClick={() => navigate("/agregar-categoria")}>
                             <span className="action-icon">+</span>
                             <div>
                                 <h4>Agregar Categoria</h4>
@@ -80,77 +143,64 @@ const DashboardContent = () => {
                             </div>
                         </button>
                         <button className="action-btn">
-                            <span className="action-icon">📋</span>
+                            <span className="action-icon">#</span>
                             <div>
                                 <h4>Ver Jugadores</h4>
                                 <p>Explora todos los jugadores disponibles</p>
                             </div>
                         </button>
                         <button className="action-btn">
-                            <span className="action-icon">🏅</span>
+                            <span className="action-icon">#</span>
                             <div>
-                                <h4>Mis Equipos</h4>
-                                <p>Gestiona tus equipos y formaciones</p>
-                            </div>
-                        </button>
-                        <button className="action-btn">
-                            <span className="action-icon">📊</span>
-                            <div>
-                                <h4>Estadísticas</h4>
-                                <p>Revisa tu desempeño y análisis</p>
+                                <h4>Estadisticas</h4>
+                                <p>Revisa los datos disponibles del sistema</p>
                             </div>
                         </button>
                     </div>
                 </section>
 
-                {/* Featured Section */}
                 <section className="featured-section">
                     <div className="featured-card">
                         <div className="featured-content">
-                            <h3>Posiciones en el Fútbol</h3>
-                            <p>Conoce las 14 posiciones diferentes disponibles en nuestro sistema:</p>
+                            <h3>Posiciones en el Futbol</h3>
+                            <p>Posiciones disponibles actualmente en el sistema:</p>
                             <div className="positions-grid">
-                                <span className="position-badge">Arquero</span>
-                                <span className="position-badge">Defensa</span>
-                                <span className="position-badge">Lateral</span>
-                                <span className="position-badge">Libero</span>
-                                <span className="position-badge">Volante</span>
-                                <span className="position-badge">Pivote</span>
-                                <span className="position-badge">Mediocampista</span>
-                                <span className="position-badge">Centrocampista</span>
-                                <span className="position-badge">Carrilero</span>
-                                <span className="position-badge">Extremo</span>
-                                <span className="position-badge">Delantero</span>
-                                <span className="position-badge">Enganche</span>
-                                <span className="position-badge">Falso 9</span>
+                                {resumen.categoriasLista.length > 0 ? (
+                                    resumen.categoriasLista.map((categoria, index) => (
+                                        <span
+                                            className="position-badge"
+                                            key={categoria?._id || categoria?.id || categoria?.nombre || index}
+                                        >
+                                            {obtenerNombreCategoria(categoria, index)}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <span className="position-badge">Sin posiciones creadas</span>
+                                )}
                             </div>
                         </div>
                         <div className="featured-image">
-                            <div className="image-placeholder">
-                                ⚽
-                            </div>
+                            <div className="image-placeholder">+</div>
                         </div>
                     </div>
                 </section>
 
-                {/* Info Cards */}
                 <section className="info-section">
                     <div className="info-card">
-                        <h3>🎨 Interfaz Moderna</h3>
-                        <p>Diseño limpio y responsivo para la mejor experiencia de usuario</p>
+                        <h3>Interfaz Moderna</h3>
+                        <p>Diseno limpio y responsivo para la mejor experiencia de usuario</p>
                     </div>
                     <div className="info-card">
-                        <h3>⚡ Rendimiento</h3>
-                        <p>Cargue rápido y actualizaciones en tiempo real</p>
+                        <h3>Rendimiento</h3>
+                        <p>Carga rapida y actualizaciones desde la base de datos</p>
                     </div>
                     <div className="info-card">
-                        <h3>🔒 Seguridad</h3>
-                        <p>Tus datos están protegidos con autenticación JWT</p>
+                        <h3>Seguridad</h3>
+                        <p>Tus datos estan protegidos con autenticacion JWT</p>
                     </div>
                 </section>
             </main>
 
-            {/* Footer */}
             <footer className="dashboard-footer">
                 <p>&copy; 2026 DFS - Fantasy Football Manager. All rights reserved.</p>
             </footer>
