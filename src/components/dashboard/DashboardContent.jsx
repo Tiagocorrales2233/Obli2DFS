@@ -142,7 +142,7 @@ const DashboardContent = () => {
                                 <p>Crea una nueva categoria en el sistema</p>
                             </div>
                         </button>
-                        <button className="action-btn">
+                        <button className="action-btn" onClick={() => navigate("/ver-jugadores")}>
                             <span className="action-icon">#</span>
                             <div>
                                 <h4>Ver Jugadores</h4>

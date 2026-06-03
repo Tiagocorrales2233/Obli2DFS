@@ -1,0 +1,196 @@
+.ver-jugadores-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #047857 0%, #059669 50%, #047857 100%);
+    color: #ffffff;
+}
+
+.ver-jugadores-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+.ver-jugadores-header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ver-jugadores-title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ver-jugadores-back-link {
+    color: #FFD700;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.ver-jugadores-back-link:hover {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.ver-jugadores-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.ver-jugadores-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.ver-jugadores-toolbar h2 {
+    color: #FFD700;
+    font-size: 1.75rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.ver-jugadores-toolbar p {
+    color: #e0e0e0;
+    font-size: 1rem;
+}
+
+.ver-jugadores-refresh {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid #FFD700;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: #FFD700;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.ver-jugadores-refresh::before,
+.ver-jugadores-refresh::after {
+    content: none;
+    display: none;
+}
+
+.jugadores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.jugador-card {
+    background: rgba(255, 215, 0, 0.12);
+    border: 1px solid rgba(255, 215, 0, 0.28);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 1rem;
+    align-items: start;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+    min-width: 0;
+}
+
+.jugador-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 0.75rem;
+    background: rgba(255, 215, 0, 0.16);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFD700;
+    font-size: 1.75rem;
+    font-weight: 900;
+    overflow: hidden;
+}
+
+.jugador-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.jugador-info {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.jugador-info h3 {
+    margin: 0;
+    color: #FFD700;
+    font-size: 1.2rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.jugador-subtitle {
+    margin: 0.25rem 0 1rem 0;
+    color: #e0e0e0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.jugador-details {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.jugador-detail {
+    display: grid;
+    grid-template-columns: minmax(90px, auto) minmax(0, 1fr);
+    gap: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 0.55rem;
+    align-items: start;
+}
+
+.jugador-detail span {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.jugador-detail strong {
+    color: #ffffff;
+    text-align: right;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.ver-jugadores-state {
+    border: 2px solid #FFD700;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    color: #FFD700;
+    background: rgba(4, 120, 87, 0.8);
+}
+
+@media (max-width: 768px) {
+    .ver-jugadores-toolbar,
+    .ver-jugadores-header-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ver-jugadores-main {
+        padding: 2rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .jugador-card {
+        grid-template-columns: 1fr;
+    }
+}
