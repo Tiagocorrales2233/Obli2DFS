@@ -72,6 +72,13 @@ const DashboardContent = () => {
                                 <p>Crea un nuevo jugador en el sistema</p>
                             </div>
                         </button>
+                        <button className="action-btn primary" onClick={() => navigate('/agregar-categoria')}>
+                            <span className="action-icon">+</span>
+                            <div>
+                                <h4>Agregar Categoria</h4>
+                                <p>Crea una nueva categoria en el sistema</p>
+                            </div>
+                        </button>
                         <button className="action-btn">
                             <span className="action-icon">📋</span>
                             <div>

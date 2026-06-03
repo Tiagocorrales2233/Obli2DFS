@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import RegisterPage from './pages/RegisterPage'
 import AddJugadorPage from './pages/AddJugadorPage'
+import AddCategoriaPage from './pages/AddCategoriaPage'
 import { restoreSession } from './features/auth.slice'
 import { BrowserRouter, Routes, Route } from "react-router"
 import { ToastContainer } from 'react-toastify'
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="/dashboard/index" element={<DashboardPage />} />
           </Route>
           <Route path="/agregar-jugador" element={<AddJugadorPage />} />
+          <Route path="/agregar-categoria" element={<AddCategoriaPage />} />
         </Route>
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
