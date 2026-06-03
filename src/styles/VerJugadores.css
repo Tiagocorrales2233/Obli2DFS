@@ -168,6 +168,52 @@
     overflow-wrap: anywhere;
 }
 
+.jugador-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.jugador-action {
+    flex: 1 1 120px;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0;
+    text-transform: none;
+    box-shadow: none;
+    transition: none;
+    animation: none;
+    transform: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.jugador-action::before,
+.jugador-action::after {
+    content: none;
+    display: none;
+}
+
+.jugador-action.editar {
+    border: 2px solid #FFD700;
+    background: rgba(255, 215, 0, 0.16);
+    color: #FFD700;
+}
+
+.jugador-action.eliminar {
+    border: 2px solid rgba(248, 113, 113, 0.9);
+    background: rgba(248, 113, 113, 0.16);
+    color: #fecaca;
+}
+
 .ver-jugadores-state {
     border: 2px solid #FFD700;
     border-radius: 1rem;
@@ -192,5 +238,9 @@
 @media (max-width: 480px) {
     .jugador-card {
         grid-template-columns: 1fr;
+    }
+
+    .jugador-action {
+        flex-basis: 100%;
     }
 }

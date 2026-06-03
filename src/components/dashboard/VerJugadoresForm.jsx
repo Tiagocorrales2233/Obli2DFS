@@ -119,6 +119,20 @@ const VerJugadoresForm = () => {
         }
     }, []);
 
+    const eliminarJugador = async (jugadorId) => {
+        const confirmado = window.confirm('Seguro que quieres eliminar este jugador?');
+        if (!confirmado) return;
+
+        try {
+            await api.delete(`/v1/jugadores/${jugadorId}`);
+            toast.success('Jugador eliminado correctamente');
+            cargarJugadores();
+        } catch (error) {
+            toast.error('Error al eliminar jugador');
+            console.error('Error al eliminar jugador:', error.response?.data || error);
+        }
+    };
+
     useEffect(() => {
         cargarJugadores();
 
@@ -166,6 +180,7 @@ const VerJugadoresForm = () => {
                 ) : (
                     <div className="jugadores-grid">
                         {jugadores.map((jugador, index) => {
+                            const jugadorId = jugador?._id || jugador?.id;
                             const nombre = obtenerTexto(jugador?.nombre, jugador?.name);
                             const apellido = obtenerTexto(jugador?.apellido, jugador?.lastName);
                             const imagen = obtenerImagen(jugador);
@@ -174,7 +189,7 @@ const VerJugadoresForm = () => {
                             const iniciales = `${nombre[0] || ''}${apellido[0] || ''}`.toUpperCase();
 
                             return (
-                                <article className="jugador-card" key={jugador?._id || jugador?.id || index}>
+                                <article className="jugador-card" key={jugadorId || index}>
                                     <div className="jugador-avatar">
                                         {imagen ? <img src={imagen} alt={`${nombre} ${apellido}`} /> : iniciales}
                                     </div>
@@ -195,6 +210,24 @@ const VerJugadoresForm = () => {
                                                 <strong>{obtenerTexto(jugador?.nacionalidad, jugador?.country)}</strong>
                                             </div>
                                         </div>
+                                        {jugadorId && (
+                                            <div className="jugador-actions">
+                                                <button
+                                                    type="button"
+                                                    className="jugador-action editar"
+                                                    onClick={() => navigate(`/jugadores/${jugadorId}/editar`)}
+                                                >
+                                                    Actualizar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="jugador-action eliminar"
+                                                    onClick={() => eliminarJugador(jugadorId)}
+                                                >
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </article>
                             );

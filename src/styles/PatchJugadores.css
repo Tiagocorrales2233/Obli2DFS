@@ -1,0 +1,167 @@
+.patch-jugador-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #047857 0%, #059669 50%, #047857 100%);
+    color: #ffffff;
+}
+
+.patch-jugador-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+.patch-jugador-header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.patch-jugador-title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.patch-jugador-link {
+    color: #FFD700;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.patch-jugador-link:hover {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.patch-jugador-main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.patch-jugador-card {
+    background: rgba(4, 120, 87, 0.88);
+    border: 2px solid #FFD700;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.patch-jugador-card h2 {
+    margin: 0 0 1.5rem 0;
+    color: #FFD700;
+    font-size: 1.5rem;
+}
+
+.patch-jugador-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.patch-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.patch-field.full {
+    grid-column: 1 / -1;
+}
+
+.patch-field label {
+    color: #FFD700;
+    font-weight: 800;
+}
+
+.patch-field input,
+.patch-field select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid rgba(255, 215, 0, 0.65);
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #047857;
+    font: inherit;
+    font-weight: 700;
+}
+
+.patch-field input:focus,
+.patch-field select:focus {
+    outline: none;
+    border-color: #FFA500;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.22);
+}
+
+.patch-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.patch-actions button {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    letter-spacing: 0;
+    text-transform: none;
+    transition: none;
+    animation: none;
+    transform: none;
+}
+
+.patch-actions button::before,
+.patch-actions button::after {
+    content: none;
+    display: none;
+}
+
+.patch-save {
+    border: none;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #047857;
+}
+
+.patch-delete {
+    border: 2px solid rgba(248, 113, 113, 0.95);
+    background: rgba(248, 113, 113, 0.16);
+    color: #fecaca;
+}
+
+.patch-cancel {
+    border: 2px solid #FFD700;
+    background: transparent;
+    color: #FFD700;
+}
+
+.patch-state {
+    border: 2px solid #FFD700;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    color: #FFD700;
+    background: rgba(4, 120, 87, 0.86);
+}
+
+@media (max-width: 700px) {
+    .patch-jugador-grid,
+    .patch-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .patch-jugador-main {
+        padding: 2rem 1rem;
+    }
+}

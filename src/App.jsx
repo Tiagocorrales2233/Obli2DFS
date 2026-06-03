@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage'
 import AddJugadorPage from './pages/AddJugadorPage'
 import AddCategoriaPage from './pages/AddCategoriaPage'
 import VerJugadoresPage from './pages/VerJugadoresPage'
+import PatchJugadoresPage from './pages/PatchJugadoresPage'
 import { restoreSession } from './features/auth.slice'
 import { BrowserRouter, Routes, Route } from "react-router"
 import { ToastContainer } from 'react-toastify'
@@ -60,6 +61,7 @@ const App = () => {
           <Route path="/agregar-jugador" element={<AddJugadorPage />} />
           <Route path="/agregar-categoria" element={<AddCategoriaPage />} />
           <Route path="/ver-jugadores" element={<VerJugadoresPage />} />
+          <Route path="/jugadores/:jugadorId/editar" element={<PatchJugadoresPage />} />
         </Route>
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
