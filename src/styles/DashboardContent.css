@@ -373,41 +373,174 @@
     margin: 0 0 1.5rem 0;
 }
 
-.positions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.75rem;
+.dashboard-container .positions-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.6rem !important;
+    align-items: center !important;
 }
 
-.position-badge {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #10B981;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    text-align: center;
-    transition: all 0.3s ease;
+.dashboard-container .positions-grid .position-badge {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 180px !important;
+    min-height: 36px !important;
+    margin: 0 !important;
+    padding: 0.55rem 1rem !important;
+    border: 1px solid #FFD700 !important;
+    border-radius: 0.5rem !important;
+    background: #047857 !important;
+    color: #FFD700 !important;
+    cursor: pointer !important;
+    font-size: 0.9rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-align: center !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
 }
 
-.position-badge:hover {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(52, 211, 153, 0.25) 100%);
-    border-color: rgba(255, 215, 0, 0.8);
-    color: #FFD700;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-    animation: goldenGlow 0.6s ease-in-out;
+.dashboard-container .positions-grid .position-badge::before,
+.dashboard-container .positions-grid .position-badge::after {
+    content: none !important;
+    display: none !important;
 }
 
-@keyframes goldenGlow {
-    0% {
-        box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.9);
-    }
-    100% {
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-    }
+.dashboard-container .positions-grid .position-badge:hover,
+.dashboard-container .positions-grid .position-badge:active,
+.dashboard-container .positions-grid .position-badge:focus,
+.dashboard-container .positions-grid .position-badge:focus-visible {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 180px !important;
+    min-height: 36px !important;
+    padding: 0.55rem 1rem !important;
+    border: 1px solid #FFD700 !important;
+    background: #047857 !important;
+    color: #FFD700 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+.dashboard-container .positions-grid .position-badge.selected {
+    border: 2px solid #FFD700 !important;
+    padding: calc(0.55rem - 1px) calc(1rem - 1px) !important;
+}
+
+.dashboard-container .positions-grid .position-badge:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.75 !important;
+}
+
+.dashboard-container .positions-selection-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    margin-top: 0.8rem !important;
+}
+
+.dashboard-container .positions-selected-count {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 34px !important;
+    margin: 0 !important;
+    padding: 0.45rem 0.85rem !important;
+    border: 1px solid #FFD700 !important;
+    border-radius: 0.5rem !important;
+    background: #047857 !important;
+    color: #FFD700 !important;
+    font-size: 0.85rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+}
+
+.dashboard-container .positions-delete-btn {
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid #ef4444 !important;
+    border-radius: 0.5rem !important;
+    background: #047857 !important;
+    color: transparent !important;
+    cursor: pointer !important;
+    font-size: 0 !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.dashboard-container .positions-delete-btn::before {
+    content: none !important;
+    display: none !important;
+}
+
+.dashboard-container .positions-delete-btn::after {
+    content: "X" !important;
+    display: inline !important;
+    color: #ef4444 !important;
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    opacity: 1 !important;
+    position: static !important;
+    background: none !important;
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+}
+
+.dashboard-container .positions-delete-btn:hover,
+.dashboard-container .positions-delete-btn:active,
+.dashboard-container .positions-delete-btn:focus,
+.dashboard-container .positions-delete-btn:focus-visible {
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    border: 1px solid #ef4444 !important;
+    background: #047857 !important;
+    color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+.dashboard-container .positions-delete-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.75 !important;
 }
 
 .featured-image {

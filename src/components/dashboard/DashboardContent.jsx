@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import api from "../../api/api";
+import { deleteCategoria } from "../../features/categorias.slice";
 import "../../styles/DashboardContent.css";
 
 const normalizarLista = (data, posiblesClaves = []) => {
@@ -30,8 +32,14 @@ const obtenerNombreCategoria = (categoria, index) => {
     );
 };
 
+const obtenerIdCategoria = (categoria) => {
+    if (typeof categoria === "string") return categoria;
+    return categoria?._id || categoria?.id || categoria?.value || "";
+};
+
 const DashboardContent = () => {
     const { usuario } = useSelector(state => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [resumen, setResumen] = useState({
         jugadores: 0,
@@ -39,6 +47,8 @@ const DashboardContent = () => {
         categoriasLista: []
     });
     const [cargandoResumen, setCargandoResumen] = useState(true);
+    const [posicionesSeleccionadas, setPosicionesSeleccionadas] = useState([]);
+    const [eliminandoPosiciones, setEliminandoPosiciones] = useState(false);
 
     const cargarResumen = useCallback(async () => {
         setCargandoResumen(true);
@@ -58,6 +68,10 @@ const DashboardContent = () => {
                 categorias: categorias.length,
                 categoriasLista: categorias
             });
+            setPosicionesSeleccionadas(prevSeleccionadas => {
+                const idsActuales = new Set(categorias.map(obtenerIdCategoria).filter(Boolean));
+                return prevSeleccionadas.filter(id => idsActuales.has(id));
+            });
         } catch (error) {
             console.error("Error al obtener resumen del dashboard:", error.response?.data || error);
             setResumen({
@@ -69,6 +83,49 @@ const DashboardContent = () => {
             setCargandoResumen(false);
         }
     }, []);
+
+    const alternarPosicionSeleccionada = (categoria) => {
+        const categoriaId = obtenerIdCategoria(categoria);
+
+        if (!categoriaId) {
+            toast.error("No se pudo identificar la posicion");
+            return;
+        }
+
+        setPosicionesSeleccionadas(prevSeleccionadas => (
+            prevSeleccionadas.includes(categoriaId)
+                ? prevSeleccionadas.filter(id => id !== categoriaId)
+                : [...prevSeleccionadas, categoriaId]
+        ));
+    };
+
+    const eliminarPosicionesSeleccionadas = async () => {
+        if (posicionesSeleccionadas.length === 0 || eliminandoPosiciones) return;
+
+        const confirmado = window.confirm(
+            `Seguro que quieres eliminar ${posicionesSeleccionadas.length} posicion(es)?`
+        );
+
+        if (!confirmado) return;
+
+        setEliminandoPosiciones(true);
+
+        try {
+            await Promise.all(
+                posicionesSeleccionadas.map(categoriaId => api.delete(`/v1/categorias/${categoriaId}`))
+            );
+
+            posicionesSeleccionadas.forEach(categoriaId => dispatch(deleteCategoria(categoriaId)));
+            setPosicionesSeleccionadas([]);
+            toast.success("Posicion(es) eliminada(s) correctamente");
+            await cargarResumen();
+        } catch (error) {
+            toast.error("Error al eliminar posicion(es)");
+            console.error("Error al eliminar posiciones:", error.response?.data || error);
+        } finally {
+            setEliminandoPosiciones(false);
+        }
+    };
 
     useEffect(() => {
         cargarResumen();
@@ -166,18 +223,42 @@ const DashboardContent = () => {
                             <p>Posiciones disponibles actualmente en el sistema:</p>
                             <div className="positions-grid">
                                 {resumen.categoriasLista.length > 0 ? (
-                                    resumen.categoriasLista.map((categoria, index) => (
-                                        <span
-                                            className="position-badge"
-                                            key={categoria?._id || categoria?.id || categoria?.nombre || index}
-                                        >
-                                            {obtenerNombreCategoria(categoria, index)}
-                                        </span>
-                                    ))
+                                    resumen.categoriasLista.map((categoria, index) => {
+                                        const categoriaId = obtenerIdCategoria(categoria);
+                                        const seleccionada = posicionesSeleccionadas.includes(categoriaId);
+
+                                        return (
+                                            <button
+                                                type="button"
+                                                className={`position-badge ${seleccionada ? "selected" : ""}`}
+                                                key={categoriaId || categoria?.nombre || index}
+                                                onClick={() => alternarPosicionSeleccionada(categoria)}
+                                                disabled={eliminandoPosiciones}
+                                            >
+                                                {obtenerNombreCategoria(categoria, index)}
+                                            </button>
+                                        );
+                                    })
                                 ) : (
                                     <span className="position-badge">Sin posiciones creadas</span>
                                 )}
                             </div>
+                            {posicionesSeleccionadas.length > 0 && (
+                                <div className="positions-selection-actions">
+                                    <span className="positions-selected-count">
+                                        {posicionesSeleccionadas.length} seleccionada(s)
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className="positions-delete-btn"
+                                        onClick={eliminarPosicionesSeleccionadas}
+                                        disabled={eliminandoPosiciones}
+                                        aria-label="Eliminar posiciones seleccionadas"
+                                    >
+                                        {eliminandoPosiciones ? "..." : "🗑"}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                         <div className="featured-image">
                             <div className="image-placeholder">+</div>
