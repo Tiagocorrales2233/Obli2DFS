@@ -149,7 +149,7 @@ const DashboardContent = () => {
                                 <p>Explora todos los jugadores disponibles</p>
                             </div>
                         </button>
-                        <button className="action-btn">
+                        <button className="action-btn" onClick={() => navigate("/ver-estadisticas")}>
                             <span className="action-icon">#</span>
                             <div>
                                 <h4>Estadisticas</h4>
