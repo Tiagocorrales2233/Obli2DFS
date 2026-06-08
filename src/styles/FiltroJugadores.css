@@ -1,0 +1,27 @@
+.filtro-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filtro-input {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #FFD700;
+    background: rgba(255, 215, 0, 0.1);
+    color: #FFFFFF;
+}
+
+.filtro-button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: #FFD700;
+    color: #047857;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.filtro-button:hover {
+    background: #FFA500;
+}

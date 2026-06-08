@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import api from '../../api/api';
 import '../../styles/VerJugadores.css';
+import '../../styles/FiltroJugadores.css';
 
 const normalizarLista = (data) => {
     const listasPosibles = [
@@ -91,6 +92,8 @@ const VerJugadoresForm = () => {
     const [jugadores, setJugadores] = useState([]);
     const [categoriasPorId, setCategoriasPorId] = useState({});
     const [loading, setLoading] = useState(true);
+    const [minEdad, setMinEdad] = useState('');
+    const [jugadoresFiltrados, setJugadoresFiltrados] = useState([]);
 
     const cargarJugadores = useCallback(async () => {
         setLoading(true);
@@ -108,9 +111,12 @@ const VerJugadoresForm = () => {
 
             const categorias = normalizarLista(categoriasResponse.data);
             setCategoriasPorId(crearMapaCategorias(categorias));
-            setJugadores(normalizarLista(jugadoresResponse.data));
+            const listaJugadores = normalizarLista(jugadoresResponse.data);
+            setJugadores(listaJugadores);
+            setJugadoresFiltrados(listaJugadores); 
         } catch (error) {
             setJugadores([]);
+            setJugadoresFiltrados([]);
             setCategoriasPorId({});
             toast.error('Error al obtener jugadores');
             console.error('Error al obtener jugadores:', error.response?.data || error);
@@ -131,6 +137,24 @@ const VerJugadoresForm = () => {
             toast.error('Error al eliminar jugador');
             console.error('Error al eliminar jugador:', error.response?.data || error);
         }
+    };
+    
+    const handleFiltrarPorEdad = () => {
+        const edadMinima = parseInt(minEdad, 10);
+        if (isNaN(edadMinima)) {
+            setJugadoresFiltrados(jugadores);
+            return;
+        }
+        const filtrados = jugadores.filter(jugador => {
+            const edad = parseInt(obtenerTexto(jugador?.edad, jugador?.age), 10);
+            return !isNaN(edad) && edad >= edadMinima;
+        });
+        setJugadoresFiltrados(filtrados);
+    };
+
+    const handleLimpiarFiltro = () => {
+        setMinEdad('');
+        setJugadoresFiltrados(jugadores);
     };
 
     useEffect(() => {
@@ -165,18 +189,29 @@ const VerJugadoresForm = () => {
             <main className="ver-jugadores-main">
                 <div className="ver-jugadores-toolbar">
                     <div>
-                        <h2>{loading ? 'Cargando jugadores...' : `${jugadores.length} jugadores encontrados`}</h2>
+                        <h2>{loading ? 'Cargando jugadores...' : `${jugadoresFiltrados.length} jugadores encontrados`}</h2>
                         <p>Lista actualizada directamente desde la base de datos.</p>
+                    </div>
+                    <div className="filtro-container">
+                        <input
+                            type="number"
+                            placeholder="Edad mínima"
+                            value={minEdad}
+                            onChange={(e) => setMinEdad(e.target.value)}
+                            className="filtro-input"
+                        />
+                        <button onClick={handleFiltrarPorEdad} className="filtro-button">Filtrar</button>
+                        <button onClick={handleLimpiarFiltro} className="filtro-button">Limpiar</button>
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="ver-jugadores-state">Cargando jugadores...</div>
-                ) : jugadores.length === 0 ? (
-                    <div className="ver-jugadores-state">No hay jugadores creados en la base de datos.</div>
+                ) : jugadoresFiltrados.length === 0 ? (
+                    <div className="ver-jugadores-state">No hay jugadores que coincidan con el filtro.</div>
                 ) : (
                     <div className="jugadores-grid">
-                        {jugadores.map((jugador, index) => {
+                        {jugadoresFiltrados.map((jugador, index) => {
                             const jugadorId = jugador?._id || jugador?.id;
                             const nombre = obtenerTexto(jugador?.nombre, jugador?.name);
                             const apellido = obtenerTexto(jugador?.apellido, jugador?.lastName);
