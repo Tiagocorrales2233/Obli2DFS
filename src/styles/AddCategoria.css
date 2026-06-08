@@ -1,270 +1,207 @@
+/* ============ PÁGINA AGREGAR CATEGORIA (DISEÑO MODERNO) ============ */
+
 .add-categoria-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #047857 0%, #059669 50%, #047857 100%);
-    display: flex;
-    flex-direction: column;
-    color: #ffffff;
+    background-color: #f8f9fa;
+    color: #212529;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Header */
 .add-categoria-header {
-    background: transparent;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .add-categoria-header-content {
-    max-width: 1400px;
+    max-width: 800px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
 }
 
 .add-categoria-title {
     font-size: 1.75rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+    color: #212529;
     margin: 0;
 }
 
 .categoria-back-link {
-    color: #FFD700;
+    color: #007bff;
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    font-weight: 500;
 }
 
 .categoria-back-link:hover {
-    background: rgba(255, 215, 0, 0.1);
+    color: #0056b3;
 }
 
+/* Main Content */
 .add-categoria-main {
-    flex: 1;
-    padding: 3rem 2rem;
+    padding: 2rem;
 }
 
 .add-categoria-wrapper {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 .categoria-form-card {
-    background: #047857;
-    border: 2px solid #FFD700;
-    border-radius: 1.5rem;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
     padding: 2.5rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .categoria-form-card h2 {
     margin: 0 0 2rem 0;
-    color: #FFD700;
-    font-size: 1.75rem;
-    text-align: center;
+    color: #212529;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: left;
 }
 
 .categoria-form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
     margin-bottom: 1.5rem;
 }
 
 .categoria-form-group label {
-    color: #FFD700;
-    font-weight: 600;
-    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 500;
 }
 
 .categoria-form-group input,
 .categoria-form-group textarea {
+    width: 100%;
     padding: 0.75rem 1rem;
-    border: 2px solid rgba(16, 185, 129, 0.5);
-    border-radius: 0.5rem;
-    background: rgba(255, 255, 255, 0.95);
-    color: #047857;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
     font-size: 1rem;
-    font-family: inherit;
-    resize: vertical;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    line-height: 1.5;
 }
 
-.categoria-form-group input::placeholder,
-.categoria-form-group textarea::placeholder {
-    color: #999;
+.categoria-form-group textarea {
+    resize: vertical;
+    min-height: 120px;
 }
 
 .categoria-form-group input:focus,
 .categoria-form-group textarea:focus {
     outline: none;
-    border-color: #FFD700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .categoria-form-buttons {
     display: flex;
+    justify-content: flex-end;
     gap: 1rem;
     margin-top: 2rem;
 }
 
 .categoria-form-buttons button {
-    flex: 1;
-    max-width: none;
     padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 700;
-    font-size: 1rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 0;
-}
-
-.categoria-form-buttons button::before,
-.categoria-form-buttons button::after {
-    content: none;
-    display: none;
-}
-
-.categoria-btn-submit {
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    color: #047857;
     border: none;
 }
 
-.categoria-btn-cancel {
-    background: transparent;
-    color: #FFD700;
-    border: 2px solid #FFD700;
+.categoria-btn-submit {
+    background-color: #007bff;
+    color: white;
 }
 
-.categoria-form-buttons button:disabled {
-    opacity: 0.6;
+.categoria-btn-submit:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.categoria-btn-submit:disabled {
+    opacity: 0.65;
     cursor: not-allowed;
 }
 
+.categoria-btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.categoria-btn-cancel:hover {
+    background-color: #5a6268;
+}
+
+/* Clases de resumen de creación compartidas */
 .creation-summary {
     margin-top: 2rem;
-    border: 2px solid rgba(255, 215, 0, 0.8);
-    border-radius: 1rem;
-    padding: 1.25rem;
-    background: rgba(255, 215, 0, 0.1);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
-}
-
-.creation-summary-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-    padding-bottom: 0.85rem;
-    margin-bottom: 1rem;
-}
-
-.creation-summary-header span,
-.creation-ai-box span,
-.creation-summary-grid span {
-    color: rgba(255, 255, 255, 0.75);
-    font-weight: 700;
-}
-
-.creation-summary-header strong {
-    color: #FFD700;
-    font-size: 1.15rem;
-    text-align: right;
-}
-
-.creation-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-}
-
-.creation-summary-grid.single {
-    grid-template-columns: 1fr;
-}
-
-.creation-summary-grid div,
-.creation-ai-box {
+    border: 1px solid #dee2e6;
     border-radius: 0.75rem;
-    background: rgba(4, 120, 87, 0.78);
-    padding: 0.85rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
 }
 
-.creation-summary-grid strong {
-    display: block;
-    color: #ffffff;
-    margin-top: 0.25rem;
-    overflow-wrap: anywhere;
+.creation-summary-header,
+.creation-summary-grid,
+.creation-ai-box {
+    margin-bottom: 1rem;
+}
+
+.creation-summary-header span, .creation-ai-box span, .creation-summary-grid span {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.creation-summary-header strong, .creation-summary-grid strong {
+    color: #212529;
 }
 
 .creation-ai-box p {
-    color: #ffffff;
-    margin: 0.45rem 0 0 0;
+    margin-top: 0.5rem;
     white-space: pre-wrap;
-    overflow-wrap: anywhere;
+    background-color: #e9ecef;
+    padding: 1rem;
+    border-radius: 0.5rem;
 }
 
 .creation-dashboard-btn {
     width: 100%;
-    max-width: none;
-    margin-top: 1rem;
-    padding: 0.8rem 1rem;
+    background-color: #28a745;
+    color: white;
     border: none;
-    border-radius: 0.5rem;
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    color: #047857;
-    font-weight: 900;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
     cursor: pointer;
-    text-transform: none;
-    letter-spacing: 0;
+    text-align: center;
+    margin-top: 1rem;
+    text-decoration: none;
+    display: block;
 }
 
-.creation-dashboard-btn::before,
-.creation-dashboard-btn::after {
-    content: none;
-    display: none;
+.creation-dashboard-btn:hover {
+    background-color: #218838;
 }
 
 @media (max-width: 768px) {
-    .add-categoria-main {
-        padding: 2rem 1rem;
-    }
-
-    .categoria-form-card {
+    .add-categoria-main, .categoria-form-card {
         padding: 1.5rem;
-    }
-
-    .categoria-form-card h2 {
-        font-size: 1.5rem;
-    }
-
-    .categoria-form-buttons {
-        flex-direction: column;
-    }
-
-    .add-categoria-title {
-        font-size: 1.5rem;
     }
 }
 
 @media (max-width: 480px) {
     .add-categoria-header-content {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        gap: 1rem;
     }
 
-    .categoria-back-link {
-        justify-content: center;
-    }
-
-    .categoria-form-card {
-        padding: 1.25rem;
+    .categoria-form-buttons {
+        flex-direction: column;
     }
 }
