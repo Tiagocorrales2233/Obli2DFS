@@ -1,15 +1,31 @@
-//import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";
 
-// Componente arrow que actúa como layout/protección de rutas
-const ProtectedRoute = () => {
+const obtenerUsuarioGuardado = () => {
+    try {
+        const usuario = localStorage.getItem("usuario");
+
+        if (!usuario || usuario === "undefined") {
+            return null;
+        }
+
+        return JSON.parse(usuario);
+    } catch {
+        return null;
+    }
+};
+
+const esAdmin = (usuario) => {
+    const rol = String(usuario?.rol || usuario?.role || "").trim().toLowerCase();
+    return rol === "admin" || rol === "administrador";
+};
+
+const ProtectedRoute = ({ adminOnly = false }) => {
     const usuario = localStorage.getItem("usuario");
     const isAuth = usuario !== null && usuario !== "undefined";
 
-    // Si no está autenticado → redirige a login
-    if (!isAuth) return <Navigate to="/" replace />;
+    if (!isAuth) return <Navigate to="/" replace />;//si no conectado, redirigir a login
+    if (adminOnly && !esAdmin(obtenerUsuarioGuardado())) return <Navigate to="/dashboard/index" replace />;
 
-    // Si está autenticado → renderiza rutas hijas
     return <Outlet />;
 };
 

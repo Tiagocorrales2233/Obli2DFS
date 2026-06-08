@@ -119,6 +119,20 @@ const obtenerLimiteJugadores = (usuario) => {
     return 4;
 };
 
+const obtenerSolicitudesPlanGuardadas = () => {
+    try {
+        return JSON.parse(localStorage.getItem('solicitudesCambioPlan') || '[]');
+    } catch {
+        return [];
+    }
+};
+
+const guardarSolicitudCambioPlan = (solicitud) => {
+    const solicitudes = obtenerSolicitudesPlanGuardadas();
+    const solicitudesSinRepetir = solicitudes.filter(item => item.email !== solicitud.email || item.estado !== 'pendiente');
+    localStorage.setItem('solicitudesCambioPlan', JSON.stringify([...solicitudesSinRepetir, solicitud]));
+};
+
 const extraerComentarioIA = (data) => {
     const posibles = [
         data?.comentarioIA,
@@ -193,6 +207,7 @@ const AddJugadorForm = () => {
     const [jugadoresCreados, setJugadoresCreados] = useState(0);
     const [imagePreview, setImagePreview] = useState(null);
     const [jugadorCreado, setJugadorCreado] = useState(null);
+    const [enviandoSolicitudPlan, setEnviandoSolicitudPlan] = useState(false);
     const [formData, setFormData] = useState({
         nombre: '',
         apellido: '',
@@ -333,6 +348,36 @@ const AddJugadorForm = () => {
         navigate('/dashboard/index');
     };
 
+    const handleSolicitudPlan = async () => {
+        const usuarioId = obtenerUsuarioId(usuario, token);
+
+        if (!usuario?.email) {
+            toast.error('No se pudo identificar el mail del usuario');
+            return;
+        }
+
+        try {
+            setEnviandoSolicitudPlan(true);
+
+            guardarSolicitudCambioPlan({
+                id: `${usuario.email}-${Date.now()}`,
+                usuario: usuarioId,
+                email: usuario.email,
+                planActual: obtenerPlanUsuario(usuario),
+                planSolicitado: 'premium',
+                estado: 'pendiente',
+                fecha: new Date().toISOString()
+            });
+
+            toast.success('Solicitud de cambio de plan enviada al admin');
+        } catch (error) {
+            toast.error('Error al enviar la solicitud de cambio de plan');
+            console.error('Error al enviar solicitud de cambio de plan:', error);
+        } finally {
+            setEnviandoSolicitudPlan(false);
+        }
+    };
+
     const categoriasParaMostrar = Array.isArray(categorias) ? categorias : [];
     const limiteJugadores = obtenerLimiteJugadores(usuario);
     const limiteIlimitado = limiteJugadores === Infinity;
@@ -370,6 +415,14 @@ const AddJugadorForm = () => {
                                 </button>
                             </div>
                         </div>
+
+                        {!limiteIlimitado && (
+                            <div className="plan-request-box">
+                                <button type="button" onClick={handleSolicitudPlan} disabled={enviandoSolicitudPlan}>
+                                    {enviandoSolicitudPlan ? 'Enviando...' : 'Solicitar cambio de plan'}
+                                </button>
+                            </div>
+                        )}
 
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">

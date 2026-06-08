@@ -286,6 +286,11 @@
     background: rgba(255, 215, 0, 0.15);
 }
 
+.actions-grid .action-btn.admin-action {
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    background: rgba(255, 215, 0, 0.18);
+}
+
 .actions-grid .action-btn:hover,
 .actions-grid .action-btn:active,
 .actions-grid .action-btn:focus,

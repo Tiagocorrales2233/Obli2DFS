@@ -37,6 +37,11 @@ const obtenerIdCategoria = (categoria) => {
     return categoria?._id || categoria?.id || categoria?.value || "";
 };
 
+const esAdmin = (usuario) => {
+    const rol = String(usuario?.rol || usuario?.role || "").trim().toLowerCase();
+    return rol === "admin" || rol === "administrador";
+};
+
 const DashboardContent = () => {
     const { usuario } = useSelector(state => state.auth);
     const dispatch = useDispatch();
@@ -213,6 +218,15 @@ const DashboardContent = () => {
                                 <p>Revisa los datos disponibles del sistema</p>
                             </div>
                         </button>
+                        {esAdmin(usuario) && (
+                            <button className="action-btn admin-action" onClick={() => navigate("/admin/solicitudes")}>
+                                <span className="action-icon">!</span>
+                                <div>
+                                    <h4>Solicitudes de plan</h4>
+                                    <p>Revisa pedidos de cambio a premium</p>
+                                </div>
+                            </button>
+                        )}
                     </div>
                 </section>
 

@@ -13,27 +13,16 @@ ChartJS.register(
     Legend
 );
 
-const coloresGrafica = {
-    fondos: [
-        'rgba(255, 99, 132, 0.22)',
-        'rgba(54, 162, 235, 0.22)',
-        'rgba(255, 206, 86, 0.22)',
-        'rgba(75, 192, 192, 0.22)',
-        'rgba(153, 102, 255, 0.22)',
-        'rgba(255, 159, 64, 0.22)',
-        'rgba(34, 197, 94, 0.22)',
-        'rgba(236, 72, 153, 0.22)'
-    ],
-    bordes: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-        'rgba(34, 197, 94, 1)',
-        'rgba(236, 72, 153, 1)'
-    ]
+const obtenerColoresGrafica = () => {
+    if (typeof window === 'undefined') {
+        return { fondos: [], bordes: [] };
+    }
+
+    const estilos = getComputedStyle(document.documentElement);
+    const fondos = estilos.getPropertyValue('--estadisticas-chart-fondos').split('|').map(color => color.trim()).filter(Boolean);
+    const bordes = estilos.getPropertyValue('--estadisticas-chart-bordes').split('|').map(color => color.trim()).filter(Boolean);
+
+    return { fondos, bordes };
 };
 
 const repetirColores = (colores, cantidad) => {
@@ -42,6 +31,7 @@ const repetirColores = (colores, cantidad) => {
 
 const crearDatosGrafica = (jugadoresPorPosicion) => {
     const cantidadPosiciones = jugadoresPorPosicion.length;
+    const coloresGrafica = obtenerColoresGrafica();
 
     return {
         labels: jugadoresPorPosicion.map(posicion => posicion.nombre),
