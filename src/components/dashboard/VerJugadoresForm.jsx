@@ -87,6 +87,34 @@ const obtenerImagen = (jugador) => {
     return jugador?.imagen || jugador?.image || jugador?.foto || jugador?.avatar || '';
 };
 
+const obtenerEdadJugador = (jugador) => {
+    const edad = jugador?.edad ?? jugador?.age;
+
+    if (typeof edad === 'number') {
+        return edad;
+    }
+
+    const edadComoNumero = parseInt(String(edad ?? '').replace(',', '.'), 10);
+    return Number.isNaN(edadComoNumero) ? null : edadComoNumero;
+};
+
+const filtrarJugadoresPorEdad = (listaJugadores, edadMinima) => {
+    if (edadMinima === '') {
+        return listaJugadores;
+    }
+
+    const edadMinimaNumero = Number(edadMinima);
+
+    if (!Number.isFinite(edadMinimaNumero) || edadMinimaNumero < 0) {
+        return listaJugadores;
+    }
+
+    return listaJugadores.filter(jugador => {
+        const edad = obtenerEdadJugador(jugador);
+        return edad !== null && edad >= edadMinimaNumero;
+    });
+};
+
 const VerJugadoresForm = () => {
     const navigate = useNavigate();
     const [jugadores, setJugadores] = useState([]);
@@ -139,17 +167,16 @@ const VerJugadoresForm = () => {
         }
     };
     
-    const handleFiltrarPorEdad = () => {
-        const edadMinima = parseInt(minEdad, 10);
-        if (isNaN(edadMinima)) {
-            setJugadoresFiltrados(jugadores);
+    const handleFiltrarPorEdad = (event) => {
+        event?.preventDefault();
+
+        if (Number(minEdad) === 0 && String(minEdad).trim() !== '') {
+            setJugadoresFiltrados([]);
+            toast.info('No hay jugadores que cumplan con ese filtro');
             return;
         }
-        const filtrados = jugadores.filter(jugador => {
-            const edad = parseInt(obtenerTexto(jugador?.edad, jugador?.age), 10);
-            return !isNaN(edad) && edad >= edadMinima;
-        });
-        setJugadoresFiltrados(filtrados);
+
+        setJugadoresFiltrados(filtrarJugadoresPorEdad(jugadores, minEdad));
     };
 
     const handleLimpiarFiltro = () => {
@@ -192,17 +219,18 @@ const VerJugadoresForm = () => {
                         <h2>{loading ? 'Cargando jugadores...' : `${jugadoresFiltrados.length} jugadores encontrados`}</h2>
                         <p>Lista actualizada directamente desde la base de datos.</p>
                     </div>
-                    <div className="filtro-container">
+                    <form className="filtro-container" onSubmit={handleFiltrarPorEdad}>
                         <input
                             type="number"
+                            min="0"
                             placeholder="Edad mínima"
                             value={minEdad}
                             onChange={(e) => setMinEdad(e.target.value)}
                             className="filtro-input"
                         />
-                        <button onClick={handleFiltrarPorEdad} className="filtro-button">Filtrar</button>
-                        <button onClick={handleLimpiarFiltro} className="filtro-button">Limpiar</button>
-                    </div>
+                        <button type="submit" className="filtro-button">Filtrar</button>
+                        <button type="button" onClick={handleLimpiarFiltro} className="filtro-button">Limpiar</button>
+                    </form>
                 </div>
 
                 {loading ? (

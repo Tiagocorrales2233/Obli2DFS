@@ -2,6 +2,9 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+    margin: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .filtro-input {
@@ -13,6 +16,8 @@
 }
 
 .filtro-button {
+    width: auto;
+    max-width: none;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     border: none;
@@ -20,8 +25,22 @@
     color: #047857;
     font-weight: 700;
     cursor: pointer;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    animation: none;
+    letter-spacing: 0;
+    text-transform: none;
+    box-shadow: none;
 }
 
 .filtro-button:hover {
     background: #FFA500;
+}
+
+.filtro-button::before,
+.filtro-button::after {
+    content: none;
+    display: none;
 }
