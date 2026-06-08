@@ -123,6 +123,28 @@
     font-size: 1.35rem !important;
 }
 
+.estadisticas-chart {
+    height: 520px;
+    border: 1px solid rgba(255, 215, 0, 0.28);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    background: rgba(15, 23, 42, 0.58);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+.ver-estadisticas-state {
+    min-height: 180px;
+    border: 2px solid #FFD700;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #FFD700;
+    background: rgba(4, 120, 87, 0.72);
+}
+
 @media (max-width: 768px) {
     .ver-estadisticas-toolbar,
     .ver-estadisticas-header-content {
@@ -138,4 +160,8 @@
         grid-template-columns: 1fr;
     }
 
+    .estadisticas-chart {
+        height: 390px;
+        padding: 0.75rem;
+    }
 }
