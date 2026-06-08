@@ -72,7 +72,7 @@ export const normalizarAuthResponse = (data) => {
 
     const tokenPayload = decodificarPayloadToken(token);
 
-    const usuario = elegirPrimeroValido(
+    const usuarioBase = elegirPrimeroValido(
         payload.usuario,
         payload.user,
         payload.cliente,
@@ -119,6 +119,67 @@ export const normalizarAuthResponse = (data) => {
         tokenPayload._id,
         tokenPayload.sub
     );
+
+    const email = elegirPrimeroValido(
+        usuarioBase?.email,
+        payload.email,
+        payload.usuario?.email,
+        payload.user?.email,
+        payload.cliente?.email,
+        root.email,
+        root.usuario?.email,
+        root.user?.email,
+        root.cliente?.email,
+        tokenPayload.email
+    );
+
+    const plan = elegirPrimeroValido(
+        usuarioBase?.plan,
+        payload.plan,
+        payload.usuario?.plan,
+        payload.user?.plan,
+        payload.cliente?.plan,
+        root.plan,
+        root.usuario?.plan,
+        root.user?.plan,
+        root.cliente?.plan,
+        tokenPayload.plan
+    );
+
+    const rol = elegirPrimeroValido(
+        usuarioBase?.rol,
+        usuarioBase?.role,
+        payload.rol,
+        payload.role,
+        payload.usuario?.rol,
+        payload.usuario?.role,
+        payload.user?.rol,
+        payload.user?.role,
+        payload.cliente?.rol,
+        payload.cliente?.role,
+        root.rol,
+        root.role,
+        root.usuario?.rol,
+        root.usuario?.role,
+        root.user?.rol,
+        root.user?.role,
+        root.cliente?.rol,
+        root.cliente?.role,
+        tokenPayload.rol,
+        tokenPayload.role
+    );
+
+    const usuario = elegirPrimeroValido(usuarioBase, clientId, email, plan, rol)
+        ? {
+            ...(typeof usuarioBase === "object" ? usuarioBase : {}),
+            _id: usuarioBase?._id || usuarioBase?.id || clientId,
+            id: usuarioBase?.id || usuarioBase?._id || clientId,
+            email,
+            plan,
+            rol,
+            role: usuarioBase?.role || rol
+        }
+        : null;
 
     return { token, usuario, clientId };
 };

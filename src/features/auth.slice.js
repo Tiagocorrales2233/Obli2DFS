@@ -13,13 +13,11 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        // Cuando inicia el proceso de login/register
         setAuthLoading: (state) => {
             state.loading = true;
             state.error = null;
         },
 
-        // Login exitoso
         setAuthSuccess: (state, action) => {
             const { token, usuario } = action.payload;
             if (!usuario) {
@@ -40,7 +38,6 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.loading = false;
             state.error = null;
-            // Guardar en localStorage
             localStorage.setItem("usuario", JSON.stringify(usuario));
             if (tokenValido) {
                 localStorage.setItem("token", token);
@@ -49,14 +46,12 @@ const authSlice = createSlice({
             }
         },
 
-        // Error en login/register
         setAuthError: (state, action) => {
             state.error = action.payload;
             state.loading = false;
             state.isAuthenticated = false;
         },
 
-        // Logout
         logout: (state) => {
             state.usuario = null;
             state.token = null;
@@ -66,7 +61,6 @@ const authSlice = createSlice({
             localStorage.removeItem("token");
         },
 
-        // Restaurar sesión desde localStorage
         restoreSession: (state, action) => {
             const { usuario, token } = action.payload;
             if (usuario) {

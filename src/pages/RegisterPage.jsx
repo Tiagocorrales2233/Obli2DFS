@@ -38,6 +38,8 @@ const RegisterPage = () => {
                 _id: usuarioBase?._id || usuarioBase?.id || auth.clientId,
                 id: usuarioBase?.id || usuarioBase?._id || auth.clientId,
                 email: usuarioBase?.email || data.email,
+                rol: usuarioBase?.rol || usuarioBase?.role,
+                role: usuarioBase?.role || usuarioBase?.rol,
                 plan: usuarioBase?.plan || "plus"
             };
 
