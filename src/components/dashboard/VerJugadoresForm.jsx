@@ -168,9 +168,6 @@ const VerJugadoresForm = () => {
                         <h2>{loading ? 'Cargando jugadores...' : `${jugadores.length} jugadores encontrados`}</h2>
                         <p>Lista actualizada directamente desde la base de datos.</p>
                     </div>
-                    <button className="ver-jugadores-refresh" type="button" onClick={cargarJugadores} disabled={loading}>
-                        Actualizar
-                    </button>
                 </div>
 
                 {loading ? (

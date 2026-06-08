@@ -64,25 +64,6 @@
     font-size: 1rem;
 }
 
-.ver-jugadores-refresh {
-    width: auto;
-    max-width: none;
-    margin: 0;
-    padding: 0.75rem 1.25rem;
-    border: 2px solid #FFD700;
-    border-radius: 0.5rem;
-    background: transparent;
-    color: #FFD700;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.ver-jugadores-refresh::before,
-.ver-jugadores-refresh::after {
-    content: none;
-    display: none;
-}
-
 .jugadores-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

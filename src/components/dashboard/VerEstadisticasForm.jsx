@@ -61,14 +61,6 @@ const VerEstadisticasForm = () => {
                         <h2>{loading ? 'Cargando estadisticas...' : 'Jugadores por posicion'}</h2>
                         <p>Grafico generado con las posiciones actuales de la base.</p>
                     </div>
-                    <button
-                        className="ver-estadisticas-refresh"
-                        type="button"
-                        onClick={cargarEstadisticas}
-                        disabled={loading}
-                    >
-                        Actualizar
-                    </button>
                 </div>
 
                 <section className="estadisticas-summary">
