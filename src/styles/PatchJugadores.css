@@ -28,15 +28,31 @@
 }
 
 .patch-jugador-link {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    border: none;
+    background: transparent;
     color: #FFD700;
     text-decoration: none;
     font-weight: 700;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
+    cursor: pointer;
+    box-shadow: none;
+    letter-spacing: 0;
+    text-transform: none;
+    animation: none;
 }
 
 .patch-jugador-link:hover {
     background: rgba(255, 215, 0, 0.1);
+}
+
+.patch-jugador-link::before,
+.patch-jugador-link::after {
+    content: none;
+    display: none;
 }
 
 .patch-jugador-main {

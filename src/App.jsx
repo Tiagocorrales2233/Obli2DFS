@@ -11,6 +11,7 @@ import AddJugadorPage from './pages/AddJugadorPage'
 import AddCategoriaPage from './pages/AddCategoriaPage'
 import VerJugadoresPage from './pages/VerJugadoresPage'
 import PatchJugadoresPage from './pages/PatchJugadoresPage'
+import PatchPlanUsuarioPage from './pages/PatchPlanUsuarioPage'
 import VerEstadisticasPage from './pages/VerEstadisticasPage'
 import VerSolicitudesAdminPage from './pages/VerSolicitudesAdmin'
 import { restoreSession } from './features/auth.slice'
@@ -68,6 +69,7 @@ const App = () => {
         </Route>
         <Route element={<ProtectedRoute adminOnly />}>
           <Route path="/admin/solicitudes" element={<VerSolicitudesAdminPage />} />
+          <Route path="/admin/solicitudes/:solicitudId/editar-plan" element={<PatchPlanUsuarioPage />} />
         </Route>
         <Route path='*' element={<NotFoundPage />} />
       </Routes>

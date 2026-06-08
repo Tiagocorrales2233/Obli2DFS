@@ -129,7 +129,7 @@ const obtenerSolicitudesPlanGuardadas = () => {
 
 const guardarSolicitudCambioPlan = (solicitud) => {
     const solicitudes = obtenerSolicitudesPlanGuardadas();
-    const solicitudesSinRepetir = solicitudes.filter(item => item.email !== solicitud.email || item.estado !== 'pendiente');
+    const solicitudesSinRepetir = solicitudes.filter(item => item.email !== solicitud.email);
     localStorage.setItem('solicitudesCambioPlan', JSON.stringify([...solicitudesSinRepetir, solicitud]));
 };
 

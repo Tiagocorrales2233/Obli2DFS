@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
-import api from '../../api/api';
 import '../../styles/VerSolicitudesAdmin.css';
 
 const normalizarLista = (data) => {
@@ -41,6 +40,12 @@ const obtenerEstadoSolicitud = (solicitud) => {
     return String(solicitud?.estado || solicitud?.status || 'pendiente').trim().toLowerCase();
 };
 
+const obtenerFechaSolicitud = (solicitud) => {
+    const fecha = solicitud?.fecha || solicitud?.createdAt || solicitud?.updatedAt;
+    const timestamp = new Date(fecha).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
+};
+
 const obtenerMensajeSolicitud = (solicitud) => {
     return solicitud?.mensaje || solicitud?.message || solicitud?.comentario || 'Sin mensaje';
 };
@@ -67,21 +72,43 @@ const obtenerSolicitudesPlanGuardadas = () => {
     }
 };
 
-const guardarSolicitudesPlan = (solicitudes) => {
-    localStorage.setItem('solicitudesCambioPlan', JSON.stringify(solicitudes));
+const deduplicarSolicitudesPorUsuario = (solicitudes) => {
+    const solicitudesPorUsuario = new Map();
+
+    solicitudes.forEach((solicitud) => {
+        const email = obtenerEmailSolicitud(solicitud).trim().toLowerCase();
+        const clave = email || obtenerIdSolicitud(solicitud);
+        const actual = solicitudesPorUsuario.get(clave);
+
+        if (!clave) return;
+        if (!actual) {
+            solicitudesPorUsuario.set(clave, solicitud);
+            return;
+        }
+
+        const estadoActual = obtenerEstadoSolicitud(actual);
+        const estadoNuevo = obtenerEstadoSolicitud(solicitud);
+        const nuevaEsPendiente = estadoNuevo === 'pendiente' && estadoActual !== 'pendiente';
+        const nuevaEsMasReciente = estadoNuevo === estadoActual && obtenerFechaSolicitud(solicitud) >= obtenerFechaSolicitud(actual);
+
+        if (nuevaEsPendiente || nuevaEsMasReciente) {
+            solicitudesPorUsuario.set(clave, solicitud);
+        }
+    });
+
+    return Array.from(solicitudesPorUsuario.values());
 };
 
 const VerSolicitudesForm = () => {
     const navigate = useNavigate();
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [actualizandoId, setActualizandoId] = useState('');
 
     const cargarSolicitudes = useCallback(async () => {
         setLoading(true);
 
         try {
-            setSolicitudes(normalizarLista(obtenerSolicitudesPlanGuardadas()));
+            setSolicitudes(deduplicarSolicitudesPorUsuario(normalizarLista(obtenerSolicitudesPlanGuardadas())));
         } catch (error) {
             setSolicitudes([]);
             toast.error('Error al obtener solicitudes de cambio de plan');
@@ -90,46 +117,6 @@ const VerSolicitudesForm = () => {
             setLoading(false);
         }
     }, []);
-
-    const actualizarEstadoLocal = (solicitudId, estado) => {
-        setSolicitudes(prevSolicitudes => {
-            const actualizadas = prevSolicitudes.map(solicitud => (
-                obtenerIdSolicitud(solicitud) === solicitudId
-                    ? { ...solicitud, estado }
-                    : solicitud
-            ));
-
-            guardarSolicitudesPlan(actualizadas);
-            return actualizadas;
-        });
-    };
-
-    const aprobarSolicitud = async (solicitud) => {
-        const solicitudId = obtenerIdSolicitud(solicitud);
-        const email = obtenerEmailSolicitud(solicitud);
-
-        if (!email) {
-            toast.error('La solicitud no tiene mail de usuario');
-            return;
-        }
-
-        try {
-            setActualizandoId(solicitudId || email);
-
-            await api.patch('/v1/usuarios/cambiar-plan', {
-                email,
-                plan: 'premium'
-            });
-
-            actualizarEstadoLocal(solicitudId, 'aceptada');
-            toast.success('Plan actualizado a premium');
-        } catch (error) {
-            toast.error('Error al aprobar la solicitud');
-            console.error('Error al aprobar solicitud:', error.response?.data || error);
-        } finally {
-            setActualizandoId('');
-        }
-    };
 
     useEffect(() => {
         cargarSolicitudes();
@@ -157,8 +144,6 @@ const VerSolicitudesForm = () => {
                             const solicitudId = obtenerIdSolicitud(solicitud);
                             const email = obtenerEmailSolicitud(solicitud);
                             const estado = obtenerEstadoSolicitud(solicitud);
-                            const actualizando = actualizandoId === (solicitudId || email);
-                            const pendiente = estado === 'pendiente';
 
                             return (
                                 <article className="solicitud-card" key={solicitudId || email || index}>
@@ -178,10 +163,10 @@ const VerSolicitudesForm = () => {
                                         <span>Plan solicitado: premium</span>
                                         <button
                                             type="button"
-                                            onClick={() => aprobarSolicitud(solicitud)}
-                                            disabled={!pendiente || actualizando}
+                                            onClick={() => navigate(`/admin/solicitudes/${encodeURIComponent(solicitudId)}/editar-plan`)}
+                                            disabled={!solicitudId}
                                         >
-                                            {actualizando ? 'Actualizando...' : pendiente ? 'Aprobar' : 'Procesada'}
+                                            Editar plan
                                         </button>
                                     </div>
                                 </article>
