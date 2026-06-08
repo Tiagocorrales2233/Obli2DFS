@@ -167,7 +167,7 @@ const DashboardContent = () => {
             <section className="hero">
                 <div className="hero-content">
                     <h2 className="hero-title">Bienvenido a tu Gestor de Jugadores</h2>
-                    <p className="hero-description">Administra jugadores, posiciones y crea tu equipo de ensueno</p>
+                    <p className="hero-description">Administra jugadores, posiciones y crea tu equipo de ensueño</p>
                 </div>
             </section>
 
