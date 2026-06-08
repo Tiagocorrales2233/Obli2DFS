@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { joiResolver } from "@hookform/resolvers/joi"
 import { useForm } from "react-hook-form"
 import { loginSchema } from "../../validators/auth.validators"
@@ -13,6 +14,7 @@ const LoginForm = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [mostrarPassword, setMostrarPassword] = useState(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: joiResolver(loginSchema)
@@ -68,7 +70,22 @@ const LoginForm = () => {
                 </div>
                 <div className="group">
                     <label htmlFor="password">Contraseña:</label>
-                    <input type="password" id="password" placeholder="Mínimo 6 caracteres" {...register("password")} />
+                    <div className="password-field">
+                        <input
+                            type={mostrarPassword ? "text" : "password"}
+                            id="password"
+                            placeholder="Mínimo 6 caracteres"
+                            {...register("password")}
+                        />
+                        <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={() => setMostrarPassword(prev => !prev)}
+                            aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        >
+                            <i className={`fa-solid ${mostrarPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true"></i>
+                        </button>
+                    </div>
                     {errors.password && <span className="error">{errors.password.message}</span>}
                 </div>
                 <button type="submit">Ingresar</button>

@@ -584,6 +584,57 @@ header h1::after {
     color: #999;
 }
 
+.password-field {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.password-field input {
+    max-width: none;
+    padding-right: 52px;
+}
+
+.password-field .password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    max-width: 36px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #047857;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+    transform: translateY(-50%);
+    animation: none;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.password-field .password-toggle::before,
+.password-field .password-toggle::after {
+    content: none;
+    display: none;
+}
+
+.password-field .password-toggle:hover,
+.password-field .password-toggle:active,
+.password-field .password-toggle:focus-visible {
+    background: rgba(4, 120, 87, 0.1);
+    color: #047857;
+    box-shadow: none;
+    transform: translateY(-50%);
+}
+
 
 .container.auth form {
     width: 100%;

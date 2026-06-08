@@ -37,6 +37,25 @@ const normalizarCategoriasResponse = (data) => {
     });
 };
 
+const normalizarJugadoresResponse = (data) => {
+    const listasPosibles = [
+        data,
+        data?.data,
+        data?.jugadores,
+        data?.players,
+        data?.items,
+        data?.results,
+        data?.docs,
+        data?.data?.jugadores,
+        data?.data?.players,
+        data?.data?.items,
+        data?.data?.results,
+        data?.data?.docs
+    ];
+
+    return listasPosibles.find(Array.isArray) || [];
+};
+
 const obtenerUsuarioId = (usuario, token) => {
     const tokenPayload = decodificarPayloadToken(token);
 
@@ -69,6 +88,35 @@ const obtenerUsuarioId = (usuario, token) => {
         tokenPayload.sub ||
         ''
     );
+};
+
+const obtenerUsuarioIdJugador = (jugador) => {
+    const usuarioJugador = jugador?.usuario || jugador?.user || jugador?.cliente || jugador?.client;
+
+    if (typeof usuarioJugador === 'object' && usuarioJugador !== null) {
+        return usuarioJugador._id || usuarioJugador.id || usuarioJugador.usuarioId || usuarioJugador.$oid || '';
+    }
+
+    return usuarioJugador || jugador?.usuarioId || jugador?.userId || '';
+};
+
+const perteneceAlUsuario = (jugador, usuarioId) => {
+    const jugadorUsuarioId = obtenerUsuarioIdJugador(jugador);
+
+    if (!usuarioId) return false;
+    if (!jugadorUsuarioId) return false;
+
+    return String(jugadorUsuarioId) === String(usuarioId);
+};
+
+const obtenerPlanUsuario = (usuario) => {
+    return String(usuario?.plan || usuario?.rol || 'plus').trim().toLowerCase();
+};
+
+const obtenerLimiteJugadores = (usuario) => {
+    const plan = obtenerPlanUsuario(usuario);
+    if (plan === 'premium') return Infinity;
+    return 4;
 };
 
 const extraerComentarioIA = (data) => {
@@ -107,6 +155,20 @@ const extraerComentarioIA = (data) => {
     return typeof comentario === 'object' ? JSON.stringify(comentario, null, 2) : String(comentario);
 };
 
+const obtenerMensajeError = (datosError) => {
+    const errores = datosError?.error || datosError?.errors;
+
+    if (Array.isArray(errores)) {
+        return errores.map(error => error?.message || String(error)).join(', ');
+    }
+
+    if (typeof errores === 'string') return errores;
+    if (datosError?.message) return datosError.message;
+    if (datosError?.mensaje) return datosError.mensaje;
+
+    return 'Error al crear jugador';
+};
+
 const elegirComentario = (opciones) => {
     return opciones[Math.floor(Math.random() * opciones.length)];
 };
@@ -127,6 +189,8 @@ const AddJugadorForm = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [cargandoCategorias, setCargandoCategorias] = useState(true);
+    const [cargandoLimite, setCargandoLimite] = useState(true);
+    const [jugadoresCreados, setJugadoresCreados] = useState(0);
     const [imagePreview, setImagePreview] = useState(null);
     const [jugadorCreado, setJugadorCreado] = useState(null);
     const [formData, setFormData] = useState({
@@ -139,28 +203,42 @@ const AddJugadorForm = () => {
     });
 
     useEffect(() => {
-        const obtenerCategorias = async () => {
+        const obtenerDatosIniciales = async () => {
             dispatch(setCategoriasLoading());
             setCargandoCategorias(true);
+            setCargandoLimite(true);
 
             try {
-                const response = await api.get('/v1/categorias', {
-                    params: { _t: Date.now() }
-                });
-                const categoriasApi = normalizarCategoriasResponse(response.data);
+                const usuarioId = obtenerUsuarioId(usuario, token);
+                const cacheBuster = Date.now();
+                const [categoriasResponse, jugadoresResponse] = await Promise.all([
+                    api.get('/v1/categorias', {
+                        params: { _t: cacheBuster }
+                    }),
+                    api.get('/v1/jugadores', {
+                        params: { _t: cacheBuster }
+                    })
+                ]);
+
+                const categoriasApi = normalizarCategoriasResponse(categoriasResponse.data);
+                const jugadoresApi = normalizarJugadoresResponse(jugadoresResponse.data);
+                const jugadoresDelUsuario = jugadoresApi.filter(jugador => perteneceAlUsuario(jugador, usuarioId));
+
                 dispatch(setCategorias(categoriasApi));
+                setJugadoresCreados(jugadoresDelUsuario.length);
             } catch (error) {
                 dispatch(setCategoriasError(error.toString()));
                 dispatch(setCategorias([]));
-                toast.error('Error al obtener categorias');
+                toast.error('Error al obtener datos iniciales');
                 console.error(error);
             } finally {
                 setCargandoCategorias(false);
+                setCargandoLimite(false);
             }
         };
 
-        obtenerCategorias();
-    }, [dispatch]);
+        obtenerDatosIniciales();
+    }, [dispatch, usuario, token]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -194,6 +272,11 @@ const AddJugadorForm = () => {
             return;
         }
 
+        if (!limiteIlimitado && jugadoresRestantes <= 0) {
+            toast.error('Llegaste al limite de jugadores de tu plan');
+            return;
+        }
+
         const usuarioId = obtenerUsuarioId(usuario, token);
 
         if (!usuarioId) {
@@ -220,6 +303,7 @@ const AddJugadorForm = () => {
             const categoriaSeleccionada = categoriasParaMostrar.find(cat => cat._id === formData.categoria);
 
             toast.success('Jugador creado exitosamente');
+            setJugadoresCreados(prev => prev + 1);
             setJugadorCreado({
                 nombre: formData.nombre,
                 apellido: formData.apellido,
@@ -236,10 +320,7 @@ const AddJugadorForm = () => {
             });
         } catch (error) {
             const datosError = error.response?.data;
-            const errores = datosError?.error || datosError?.errors;
-            const mensaje = Array.isArray(errores)
-                ? errores.join(', ')
-                : datosError?.message || 'Error al crear jugador';
+            const mensaje = obtenerMensajeError(datosError);
 
             toast.error(mensaje);
             console.error('Error al crear jugador:', datosError || error);
@@ -253,6 +334,10 @@ const AddJugadorForm = () => {
     };
 
     const categoriasParaMostrar = Array.isArray(categorias) ? categorias : [];
+    const limiteJugadores = obtenerLimiteJugadores(usuario);
+    const limiteIlimitado = limiteJugadores === Infinity;
+    const jugadoresRestantes = limiteIlimitado ? Infinity : Math.max(limiteJugadores - jugadoresCreados, 0);
+    const planUsuario = obtenerPlanUsuario(usuario).toUpperCase();
 
     return (
         <div className="add-jugador-container">
@@ -269,6 +354,22 @@ const AddJugadorForm = () => {
                 <div className="add-jugador-wrapper">
                     <div className="form-card">
                         <h2>Completa los datos del jugador</h2>
+
+                        <div className="player-limit-counter">
+                            <div>
+                                <span>Jugadores restantes</span>
+                                <strong>{cargandoLimite ? '...' : limiteIlimitado ? '∞' : jugadoresRestantes}</strong>
+                            </div>
+                            <div className="player-limit-plan">
+                                <span>Plan {planUsuario}</span>
+                                <button className="limit-info-button" type="button" aria-label="Informacion sobre limite de jugadores">
+                                    i
+                                    <span className="limit-info-tooltip">
+                                        Si queres aumentar el limite, solicita el cambio de plan.
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
 
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
@@ -377,10 +478,10 @@ const AddJugadorForm = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="btn-submit"
-                                    disabled={loading}
+                                    className={`btn-submit ${loading ? 'is-loading' : ''}`}
+                                    disabled={loading || cargandoLimite || (!limiteIlimitado && jugadoresRestantes <= 0)}
                                 >
-                                    {loading ? 'Creando...' : 'Crear Jugador'}
+                                    {loading ? 'Creando...' : !limiteIlimitado && jugadoresRestantes <= 0 ? 'Limite alcanzado' : 'Crear Jugador'}
                                 </button>
                             </div>
                         </form>

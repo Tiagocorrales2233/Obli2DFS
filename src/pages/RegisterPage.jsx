@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { joiResolver } from "@hookform/resolvers/joi"
 import { useForm } from "react-hook-form"
 import { registerSchema } from "../validators/auth.validators"
@@ -8,9 +9,29 @@ import { setAuthLoading, setAuthSuccess, setAuthError } from "../features/auth.s
 import api from "../api/api"
 import { normalizarAuthResponse } from "../utils/auth"
 
+const obtenerMensajeErrorRegistro = (error) => {
+    const datos = error.response?.data;
+    const errores = datos?.error || datos?.errors;
+
+    if (Array.isArray(errores)) {
+        return errores
+            .map(item => item?.message || item)
+            .filter(Boolean)
+            .join(", ");
+    }
+
+    if (typeof errores === "string") return errores;
+    if (datos?.message) return datos.message;
+    if (datos?.mensaje) return datos.mensaje;
+
+    return error.message || "Error al registrarse";
+};
+
 const RegisterPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [mostrarPassword, setMostrarPassword] = useState(false);
+    const [mostrarConfirmPassword, setMostrarConfirmPassword] = useState(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: joiResolver(registerSchema)
@@ -53,7 +74,7 @@ const RegisterPage = () => {
 
         } catch (error) {
             // Si hay error, mostrar en Redux y al usuario
-            const mensaje = error.response?.data?.message || error.message || "Error al registrarse";
+            const mensaje = obtenerMensajeErrorRegistro(error);
             dispatch(setAuthError(mensaje));
             toast.error(mensaje);
         }
@@ -85,23 +106,43 @@ const RegisterPage = () => {
 
                     <div className="group">
                         <label htmlFor="password">Contraseña:</label>
-                        <input 
-                            type="password" 
-                            id="password"
-                            placeholder="Mínimo 6 caracteres"
-                            {...register("password")}
-                        />
+                        <div className="password-field">
+                            <input
+                                type={mostrarPassword ? "text" : "password"}
+                                id="password"
+                                placeholder="Mínimo 6 caracteres"
+                                {...register("password")}
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setMostrarPassword(prev => !prev)}
+                                aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                <i className={`fa-solid ${mostrarPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true"></i>
+                            </button>
+                        </div>
                         {errors.password && <span className="error">{errors.password.message}</span>}
                     </div>
 
                     <div className="group">
                         <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
-                        <input 
-                            type="password" 
-                            id="confirmPassword"
-                            placeholder="Repite tu contraseña"
-                            {...register("confirmPassword")}
-                        />
+                        <div className="password-field">
+                            <input
+                                type={mostrarConfirmPassword ? "text" : "password"}
+                                id="confirmPassword"
+                                placeholder="Repite tu contraseña"
+                                {...register("confirmPassword")}
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setMostrarConfirmPassword(prev => !prev)}
+                                aria-label={mostrarConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                <i className={`fa-solid ${mostrarConfirmPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true"></i>
+                            </button>
+                        </div>
                         {errors.confirmPassword && <span className="error">{errors.confirmPassword.message}</span>}
                     </div>
 
