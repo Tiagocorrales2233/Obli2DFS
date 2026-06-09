@@ -370,16 +370,16 @@
     animation: spin 0.6s linear infinite;
 }
 
-.creation-summary {
+.add-jugador-container .creation-summary {
     margin-top: 2rem;
-    border: 2px solid rgba(255, 215, 0, 0.8);
+    border: 2px solid rgba(255, 215, 0, 0.8) !important;
     border-radius: 1rem;
     padding: 1.25rem;
-    background: rgba(4, 120, 87, 0.92);
+    background: rgba(4, 120, 87, 0.96) !important;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
 }
 
-.creation-summary-header {
+.add-jugador-container .creation-summary-header {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -389,54 +389,54 @@
     margin-bottom: 1rem;
 }
 
-.creation-summary-header span,
-.creation-ai-box span,
-.creation-summary-grid span {
-    color: rgba(255, 255, 255, 0.82);
+.add-jugador-container .creation-summary-header span,
+.add-jugador-container .creation-ai-box span,
+.add-jugador-container .creation-summary-grid span {
+    color: rgba(255, 255, 255, 0.84) !important;
     font-weight: 700;
 }
 
-.creation-summary-header strong {
-    color: #FFD700;
+.add-jugador-container .creation-summary-header strong {
+    color: #FFD700 !important;
     font-size: 1.15rem;
     text-align: right;
 }
 
-.creation-summary-grid {
+.add-jugador-container .creation-summary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 0.85rem;
     margin-bottom: 1rem;
 }
 
-.creation-summary-grid div,
-.creation-ai-box {
+.add-jugador-container .creation-summary-grid div,
+.add-jugador-container .creation-ai-box {
     border-radius: 0.75rem;
-    background: rgba(6, 78, 59, 0.72);
+    background: rgba(6, 78, 59, 0.85) !important;
     padding: 0.85rem;
     border: 1px solid rgba(255, 215, 0, 0.24);
 }
 
-.creation-summary-grid strong {
+.add-jugador-container .creation-summary-grid strong {
     display: block;
-    color: #ffffff;
+    color: #ffffff !important;
     margin-top: 0.25rem;
     overflow-wrap: anywhere;
 }
 
-.creation-ai-box p {
-    color: #ffffff;
+.add-jugador-container .creation-ai-box p {
+    color: #ffffff !important;
     margin: 0.45rem 0 0 0;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
-    background: rgba(4, 120, 87, 0.82);
+    background: rgba(4, 120, 87, 0.88) !important;
     border: 1px solid rgba(255, 215, 0, 0.22);
     border-radius: 0.55rem;
     padding: 0.85rem;
     line-height: 1.45;
 }
 
-.creation-dashboard-btn {
+.add-jugador-container .creation-dashboard-btn {
     width: 100%;
     max-width: none;
     margin-top: 1rem;
@@ -451,8 +451,8 @@
     letter-spacing: 0;
 }
 
-.creation-dashboard-btn::before,
-.creation-dashboard-btn::after {
+.add-jugador-container .creation-dashboard-btn::before,
+.add-jugador-container .creation-dashboard-btn::after {
     content: none;
     display: none;
 }
