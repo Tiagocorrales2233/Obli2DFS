@@ -116,7 +116,7 @@ const PatchPlanUsuarioForm = () => {
                     </button>
                 </div>
             </header>
-
+            
             <main className="patch-jugador-main">
                 <div className="patch-jugador-card">
                     <h2>Actualiza el plan del usuario seleccionado</h2>

@@ -190,7 +190,7 @@ const elegirComentario = (opciones) => {
 const generarComentarioJugador = ({ nombre, apellido, edad, posicion, nacionalidad }) => {
     return elegirComentario([
         `${nombre} ${apellido} llega como una incorporacion interesante para la posicion de ${posicion}. Con ${edad} anos y nacionalidad ${nacionalidad}, puede aportar energia, margen de mejora y una opcion util para ampliar el plantel.`,
-        `Analisis IA: ${nombre} ${apellido} perfila como un jugador con buen potencial dentro del sistema. Su rol en ${posicion} lo vuelve importante para equilibrar el equipo, especialmente si mantiene regularidad y buena adaptacion.`,
+        `Descripción: ${nombre} ${apellido} perfila como un jugador con buen potencial dentro del sistema. Su rol en ${posicion} lo vuelve importante para equilibrar el equipo, especialmente si mantiene regularidad y buena adaptacion.`,
         `Recomendacion IA: seguir de cerca la evolucion de ${nombre} ${apellido}. Su edad (${edad}) permite proyectarlo a futuro, y su perfil ${nacionalidad} puede sumar variedad al armado del equipo.`,
         `${nombre} ${apellido} queda registrado correctamente. Por sus datos, parece una pieza adecuada para trabajar profundidad en ${posicion} y generar competencia interna en el plantel.`
     ]);
