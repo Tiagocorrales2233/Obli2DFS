@@ -32,6 +32,16 @@ const RegisterPage = () => {
     const dispatch = useDispatch();
     const [mostrarPassword, setMostrarPassword] = useState(false);
     const [mostrarConfirmPassword, setMostrarConfirmPassword] = useState(false);
+    let iconoPassword = "fa-solid fa-eye";
+    let iconoConfirmPassword = "fa-solid fa-eye";
+
+    if (mostrarPassword) {
+        iconoPassword = "fa-solid fa-eye-slash";
+    }
+
+    if (mostrarConfirmPassword) {
+        iconoConfirmPassword = "fa-solid fa-eye-slash";
+    }
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: joiResolver(registerSchema)
@@ -119,7 +129,7 @@ const RegisterPage = () => {
                                 onClick={() => setMostrarPassword(prev => !prev)}
                                 aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                             >
-                                <i className={`fa-solid ${mostrarPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true"></i>
+                                <i className={iconoPassword} aria-hidden="true"></i>
                             </button>
                         </div>
                         {errors.password && <span className="error">{errors.password.message}</span>}
@@ -140,7 +150,7 @@ const RegisterPage = () => {
                                 onClick={() => setMostrarConfirmPassword(prev => !prev)}
                                 aria-label={mostrarConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                             >
-                                <i className={`fa-solid ${mostrarConfirmPassword ? "fa-eye-slash" : "fa-eye"}`} aria-hidden="true"></i>
+                                <i className={iconoConfirmPassword} aria-hidden="true"></i>
                             </button>
                         </div>
                         {errors.confirmPassword && <span className="error">{errors.confirmPassword.message}</span>}
