@@ -42,6 +42,8 @@
     letter-spacing: 0;
     text-transform: none;
     animation: none;
+    transform: none;
+    transition: background 0.2s ease;
 }
 
 .solicitudes-back-link::before,
@@ -52,6 +54,8 @@
 
 .solicitudes-back-link:hover {
     background: rgba(255, 215, 0, 0.1);
+    transform: none;
+    box-shadow: none;
 }
 
 .solicitudes-admin-main {
@@ -161,6 +165,8 @@
     letter-spacing: 0;
     text-transform: none;
     animation: none;
+    transform: none;
+    transition: background 0.2s ease;
 }
 
 .solicitud-card-footer button::before,
@@ -172,6 +178,12 @@
 .solicitud-card-footer button:disabled {
     opacity: 0.65;
     cursor: not-allowed;
+}
+
+.solicitud-card-footer button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+    transform: none;
+    box-shadow: none;
 }
 
 @media (max-width: 768px) {
