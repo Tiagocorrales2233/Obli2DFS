@@ -88,7 +88,7 @@ const LoginForm = () => {
                     </div>
                     {errors.password && <span className="error">{errors.password.message}</span>}
                 </div>
-                <button type="submit">Ingresar</button>
+                <button type="submit" className="login-submit">Ingresar</button>
             </form>
             <p className="link">
                 ¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link>

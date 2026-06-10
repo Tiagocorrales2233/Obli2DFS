@@ -738,6 +738,47 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.container.auth form .login-submit {
+    width: 100%;
+    max-width: 400px;
+    padding: 16px 32px;
+    border: 2px solid #FFD700;
+    border-radius: 12px;
+    background: transparent;
+    color: #FFD700;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    box-shadow: none;
+    transform: none;
+    transition: none;
+    animation: none;
+    overflow: visible;
+}
+
+.container.auth form .login-submit::before,
+.container.auth form .login-submit::after {
+    content: none;
+    display: none;
+}
+
+.container.auth form .login-submit:hover,
+.container.auth form .login-submit:active,
+.container.auth form .login-submit:focus,
+.container.auth form .login-submit:focus-visible {
+    border-color: #FFD700;
+    background: #FFD700;
+    color: #047857;
+    box-shadow: none;
+    transform: none;
+    transition: none;
+    animation: none;
+    outline: none;
+}
+
 .link, .register-link, .login-link {
     margin-top: 25px;
     color: #D4AF37;
