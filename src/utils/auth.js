@@ -25,7 +25,7 @@ export const decodificarPayloadToken = (token) => {
                 .split("")
                 .map((caracter) => `%${caracter.charCodeAt(0).toString(16).padStart(2, "0")}`)
                 .join("")
-        );
+        );//transformar cada caracter a su valor hexadecimal y agregar % para decodificar correctamente caracteres especiales
 
         return JSON.parse(json);
     } catch {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -37,9 +37,293 @@ const obtenerIdCategoria = (categoria) => {
     return categoria?._id || categoria?.id || categoria?.value || "";
 };
 
+const obtenerTexto = (...valores) => {
+    const valor = valores.find(item => item !== undefined && item !== null && String(item).trim() !== "");
+    return valor !== undefined && valor !== null ? String(valor).trim() : "Sin dato";
+};
+
+const crearMapaCategorias = (categorias) => (
+    categorias.reduce((mapa, categoria, index) => {
+        const id = obtenerIdCategoria(categoria);
+        if (id) {
+            mapa[id] = obtenerNombreCategoria(categoria, index);
+        }
+        return mapa;
+    }, {})
+);
+
+const pareceObjectId = (valor) => /^[a-f\d]{24}$/i.test(String(valor || ""));
+
+const obtenerNombreJugador = (jugador, fallback = "Jugador") => {
+    const nombre = String(jugador?.nombre || jugador?.name || "").trim();
+    const apellido = String(jugador?.apellido || jugador?.lastName || "").trim();
+    const nombreCompleto = `${nombre} ${apellido}`.trim();
+    return nombreCompleto || fallback;
+};
+
+const obtenerPosicionJugador = (jugador, categoriasPorId = {}) => {
+    const posicion = jugador?.posicion || jugador?.categoria || jugador?.position;
+
+    if (typeof posicion === "object" && posicion !== null) {
+        return obtenerTexto(posicion.nombre, posicion.name, posicion.label, posicion.descripcion);
+    }
+
+    if (pareceObjectId(posicion)) {
+        return categoriasPorId[posicion] || "Sin posicion";
+    }
+
+    return obtenerTexto(posicion, "Sin posicion");
+};
+
+const obtenerPlanUsuario = (usuario) => String(usuario?.plan || "").trim().toLowerCase();
+
+const puedeUsarChatbot = (usuario) => ["plus", "premium"].includes(obtenerPlanUsuario(usuario));
+
 const esAdmin = (usuario) => {
     const rol = String(usuario?.rol || usuario?.role || "").trim().toLowerCase();
     return rol === "admin" || rol === "administrador";
+};
+
+const crearRespuestaChatbot = ({ pregunta, jugadores, categoriasPorId }) => {
+    const consulta = pregunta.trim().toLowerCase();
+
+    if (consulta.includes("gracias") || consulta.includes("muchas gracias") || consulta.includes("te agradezco")) {
+        return "Gracias a vos. Si necesitas algun dato de algun jugador mas, no dudes en preguntar.";
+    }
+
+    if (jugadores.length === 0) {
+        return "Todavia no hay jugadores cargados en la base. Cuando agregues algunos, puedo darte analisis generales sobre ellos.";
+    }
+
+    const jugadorMencionado = jugadores.find(jugador => (
+        obtenerNombreJugador(jugador, "").toLowerCase().split(" ").some(parte => parte && consulta.includes(parte))
+    ));
+
+    const jugador = jugadorMencionado || jugadores[Math.floor(Math.random() * jugadores.length)];
+    const nombre = obtenerNombreJugador(jugador);
+    const posicion = obtenerPosicionJugador(jugador, categoriasPorId);
+    const edad = obtenerTexto(jugador?.edad, jugador?.age);
+    const nacionalidad = obtenerTexto(jugador?.nacionalidad, jugador?.country);
+
+    if (consulta.includes("dato curioso") || consulta.includes("curiosidad") || consulta.includes("algo curioso")) {
+        const datosCuriosos = [
+            `${nombre} suele quedarse practicando remates despues de cada entrenamiento para mejorar su definicion.`,
+            `Dato curioso: ${nombre} tiene una cabala antes de jugar y siempre revisa dos veces sus botines antes de salir a la cancha.`,
+            `Una curiosidad sobre ${nombre}: en los partidos internos le dicen "el estratega" porque siempre intenta ordenar al equipo desde su posicion de ${posicion}.`,
+            `${nombre} aparentemente empezo jugando en otra posicion, pero termino destacandose como ${posicion} por su lectura del juego.`
+        ];
+
+        return datosCuriosos[Math.floor(Math.random() * datosCuriosos.length)];
+    }
+
+    if (consulta.includes("mejor") || consulta.includes("recomenda") || consulta.includes("destaca")) {
+        return `${nombre} podria ser una buena opcion para destacar. Segun sus datos, encaja como ${posicion} y tiene perfil para aportar equilibrio al equipo.`;
+    }
+
+    if (consulta.includes("edad") || consulta.includes("joven") || consulta.includes("viejo")) {
+        return `${nombre} figura con edad ${edad}. Parece un jugador con margen para adaptarse y sostener rendimiento si recibe continuidad.`;
+    }
+
+    if (consulta.includes("posicion") || consulta.includes("puesto") || consulta.includes("rol")) {
+        return `${nombre} esta asociado a la posicion ${posicion}. Para el plantel, podria servir como una pieza util para ordenar esa zona del campo.`;
+    }
+
+    if (consulta.includes("nacionalidad") || consulta.includes("pais")) {
+        return `${nombre} aparece con nacionalidad ${nacionalidad}. Eso puede sumar variedad al plantel y abrir lecturas interesantes para compararlo con otros jugadores.`;
+    }
+
+    if (consulta.includes("cuantos") || consulta.includes("cantidad") || consulta.includes("total")) {
+        return `En este momento hay ${jugadores.length} jugador(es) cargado(s). A nivel general, el plantel ya tiene material para analizar posiciones, edades y perfiles.`;
+    }
+
+    return `${nombre} me parece una pieza interesante dentro de los jugadores cargados. Como ${posicion}, podria aportar orden, competencia interna y una alternativa flexible para el equipo.`;
+};
+
+const ChatbotJugadores = ({ jugadores = [], categorias = [] }) => {
+    const [abierto, setAbierto] = useState(true);
+    const [pregunta, setPregunta] = useState("");
+    const [posicion, setPosicion] = useState({ x: 16, y: 128 });
+    const arrastreRef = useRef({
+        activo: false,
+        movido: false,
+        bloquearClick: false,
+        inicioX: 0,
+        inicioY: 0,
+        posicionX: 0,
+        posicionY: 0
+    });
+    const [mensajes, setMensajes] = useState([
+        {
+            autor: "bot",
+            texto: "Preguntame algo sobre tus jugadores. Respondo con analisis genericos usando los datos cargados."
+        }
+    ]);
+    const categoriasPorId = crearMapaCategorias(categorias);
+
+    const enviarPregunta = (event) => {
+        event.preventDefault();
+
+        if (!pregunta.trim()) return;
+
+        const textoPregunta = pregunta.trim();
+        const respuesta = crearRespuestaChatbot({
+            pregunta: textoPregunta,
+            jugadores,
+            categoriasPorId
+        });
+
+        setMensajes(prevMensajes => [
+            ...prevMensajes,
+            { autor: "usuario", texto: textoPregunta },
+            { autor: "bot", texto: respuesta }
+        ]);
+        setPregunta("");
+    };
+
+    const iniciarArrastre = (event) => {
+        if (event.target.closest(".chatbot-close, input, form")) return;
+
+        arrastreRef.current = {
+            activo: true,
+            movido: false,
+            bloquearClick: false,
+            inicioX: event.clientX,
+            inicioY: event.clientY,
+            posicionX: posicion.x,
+            posicionY: posicion.y
+        };
+        event.currentTarget.setPointerCapture(event.pointerId);
+    };
+
+    const moverArrastre = (event) => {
+        if (!arrastreRef.current.activo) return;
+
+        const deltaX = event.clientX - arrastreRef.current.inicioX;
+        const deltaY = event.clientY - arrastreRef.current.inicioY;
+
+        if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
+            arrastreRef.current.movido = true;
+        }
+
+        const anchoElemento = event.currentTarget.offsetWidth || 64;
+        const altoElemento = event.currentTarget.offsetHeight || 64;
+        const margen = 8;
+        const maxX = Math.max(margen, window.innerWidth - anchoElemento - margen);
+        const maxY = Math.max(margen, window.innerHeight - altoElemento - margen);
+
+        setPosicion({
+            x: Math.min(Math.max(margen, arrastreRef.current.posicionX + deltaX), maxX),
+            y: Math.min(Math.max(margen, arrastreRef.current.posicionY + deltaY), maxY)
+        });
+    };
+
+    const finalizarArrastre = (event) => {
+        if (!arrastreRef.current.activo) return;
+
+        arrastreRef.current.activo = false;
+        arrastreRef.current.bloquearClick = arrastreRef.current.movido;
+
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+    };
+
+    const alternarChat = () => {
+        if (arrastreRef.current.bloquearClick) {
+            arrastreRef.current.bloquearClick = false;
+            return;
+        }
+
+        setAbierto(prevAbierto => !prevAbierto);
+    };
+
+    const abrirChat = (event) => {
+        event.stopPropagation();
+        if (arrastreRef.current.bloquearClick) {
+            arrastreRef.current.bloquearClick = false;
+            return;
+        }
+        setAbierto(true);
+    };
+
+    const cerrarChat = (event) => {
+        event.stopPropagation();
+        arrastreRef.current.activo = false;
+        arrastreRef.current.bloquearClick = false;
+        setAbierto(false);
+    };
+
+    return (
+        <aside
+            className={`players-chatbot ${abierto ? "open" : "collapsed"}`}
+            style={{ left: `${posicion.x}px`, top: `${posicion.y}px` }}
+            onPointerDown={abierto ? iniciarArrastre : undefined}
+            onPointerMove={abierto ? moverArrastre : undefined}
+            onPointerUp={abierto ? finalizarArrastre : undefined}
+            onPointerCancel={abierto ? finalizarArrastre : undefined}
+            aria-label="Chat de jugadores"
+        >
+            {!abierto && (
+                <button
+                    type="button"
+                    className="chatbot-toggle"
+                    onPointerDown={iniciarArrastre}
+                    onPointerMove={moverArrastre}
+                    onPointerUp={finalizarArrastre}
+                    onPointerCancel={finalizarArrastre}
+                    onClick={abrirChat}
+                    aria-label="Mostrar chat de jugadores"
+                    title="Mostrar chat"
+                >
+                    <span className="chatbot-icon" aria-hidden="true">
+                        <span className="chatbot-icon-dots" />
+                    </span>
+                </button>
+            )}
+
+            {abierto && (
+                <div className="chatbot-panel">
+                    <div className="chatbot-header">
+                        <span className="chatbot-mark">#</span>
+                        <div>
+                            <h3>Asistente DFS</h3>
+                            <p>Jugadores cargados</p>
+                        </div>
+                        <button
+                            type="button"
+                            className="chatbot-close"
+                            onClick={cerrarChat}
+                            aria-label="Cerrar chat de jugadores"
+                            title="Cerrar chat"
+                        >
+                            X
+                        </button>
+                    </div>
+
+                    <div className="chatbot-messages">
+                        {mensajes.map((mensaje, index) => (
+                            <div className={`chatbot-message ${mensaje.autor}`} key={`${mensaje.autor}-${index}`}>
+                                {mensaje.texto}
+                            </div>
+                        ))}
+                    </div>
+
+                    <form className="chatbot-form" onSubmit={enviarPregunta}>
+                        <input
+                            type="text"
+                            value={pregunta}
+                            onChange={(event) => setPregunta(event.target.value)}
+                            placeholder="Pregunta por un jugador..."
+                            aria-label="Pregunta para el asistente de jugadores"
+                        />
+                        <button type="submit" aria-label="Enviar pregunta">
+                            <span className="chatbot-send-icon" aria-hidden="true" />
+                        </button>
+                    </form>
+                </div>
+            )}
+        </aside>
+    );
 };
 
 const DashboardContent = () => {
@@ -49,6 +333,7 @@ const DashboardContent = () => {
     const [resumen, setResumen] = useState({
         jugadores: 0,
         categorias: 0,
+        jugadoresLista: [],
         categoriasLista: []
     });
     const [cargandoResumen, setCargandoResumen] = useState(true);
@@ -71,6 +356,7 @@ const DashboardContent = () => {
             setResumen({
                 jugadores: jugadores.length,
                 categorias: categorias.length,
+                jugadoresLista: jugadores,
                 categoriasLista: categorias
             });
             setPosicionesSeleccionadas(prevSeleccionadas => {
@@ -82,6 +368,7 @@ const DashboardContent = () => {
             setResumen({
                 jugadores: 0,
                 categorias: 0,
+                jugadoresLista: [],
                 categoriasLista: []
             });
         } finally {
@@ -152,6 +439,13 @@ const DashboardContent = () => {
 
     return (
         <div className="dashboard-container">
+            {puedeUsarChatbot(usuario) && (
+                <ChatbotJugadores
+                    jugadores={resumen.jugadoresLista}
+                    categorias={resumen.categoriasLista}
+                />
+            )}
+
             <header className="dashboard-header">
                 <div className="header-content">
                     <div className="logo-section"></div>
